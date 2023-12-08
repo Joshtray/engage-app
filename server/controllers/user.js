@@ -3,19 +3,53 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const sharp = require("sharp");
 const cloudinary = require("../helper/imageUpload");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 exports.createUser = async (req, res) => {
   const { fullname, email, password } = req.body;
   const userExists = await User.isThisEmailInUse(email);
   if (userExists)
     return res.json({ success: false, message: "Email is already in use." });
+  const emailToken = crypto.randomBytes(64).toString("hex");
   const user = await User({
     fullname,
     email,
     password,
+    emailToken,
   });
   await user.save();
+  this.sendEmail(user.email, user.fullname, emailToken);
   res.json({ success: true, user });
+};
+
+exports.sendEmail = (email, fullname, emailToken) => {
+  var transporter = nodemailer.createTransport({
+    service: "hotmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const url = `http://localhost:8000/verify-email/${emailToken}`;
+
+  const mailOptions = {
+    from: '"engage" <jesseyuchenwichi@outlook.com>',
+    to: email,
+    subject: "engage: Please verify your email address.",
+    html: `<h1>Email Confirmation</h1>
+    <h2>Hello ${fullname},</h2>
+    <p>Thank you for signing up to use engage! Please confirm your email by clicking <a href=${url}> this link</a>.</p>
+    </div>`,
+  };
+
+  transporter.sendMail(mailOptions, function (err, info) {
+    if (err) 
+      console.log(err);
+    else 
+      console.log(info);
+  });
 };
 
 exports.userSignIn = async (req, res) => {
@@ -37,10 +71,16 @@ exports.userSignIn = async (req, res) => {
   const userInfo = {
     fullname: user.fullname,
     email: user.email,
-    avatar: user.avatar || '',
+    avatar: user.avatar || "",
+    isVerified: user.isVerified,
   };
 
-  res.json({ success: true, message: "You are logged in.", user: userInfo, token });
+  res.json({
+    success: true,
+    message: "You are logged in.",
+    user: userInfo,
+    token,
+  });
 };
 
 exports.userSignOut = async (req, res) => {
@@ -51,7 +91,7 @@ exports.userSignOut = async (req, res) => {
   if (!token) return res.json({ success: false, message: "Unauthorized" });
 
   res.json({ success: true, message: "You are logged out." });
-}
+};
 
 exports.uploadProfile = async (req, res) => {
   const { user } = req;
@@ -67,7 +107,7 @@ exports.uploadProfile = async (req, res) => {
       overwrite: true,
     });
 
-    await User.findByIdAndUpdate(user._id, { avatar:result.url });
+    await User.findByIdAndUpdate(user._id, { avatar: result.url });
 
     res
       .status(201)

@@ -14,6 +14,8 @@ To run the engage application, please follow these steps:
 - Create a .env file in the root directory of the project and add the following environment variables: 
     - MONGO_URI=mongodb+srv://genericUser:genericUser@auth-app.ekcsods.mongodb.net/?retryWrites=true&w=majority
     - JWT_SECRET=Gracelandsch15%
+    - EMAIL=\<your email address\>
+    - EMAIL_PASSWORD=\<your email account password\>
     * The cloudinary environment variables can be obtained easily by creating a free account on Cloudinary and getting the values
 
 - Start the application

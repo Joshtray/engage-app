@@ -6,6 +6,7 @@ const LoginContext = createContext();
 
 const LoginProvider = ({ navigation, children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [profile, setProfile] = useState({});
   const [loginPending, setLoginPending] = useState(false);
 
@@ -22,11 +23,13 @@ const LoginProvider = ({ navigation, children }) => {
         if (res.data.success) {
             setProfile(res.data.user);
             setIsLoggedIn(true);
+            setIsVerified(res.data.user.isVerified);
         }
         else {
             await AsyncStorage.removeItem("token");
             setProfile({});
             setIsLoggedIn(false);
+            setIsVerified(false);
         }
     };
     setLoginPending(false)
@@ -41,6 +44,8 @@ const LoginProvider = ({ navigation, children }) => {
       value={{
         isLoggedIn,
         setIsLoggedIn,
+        isVerified,
+        setIsVerified,
         profile,
         setProfile,
         loginPending,

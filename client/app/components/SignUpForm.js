@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Platform } from "react-native";
 import React, { useState } from "react";
 import FormContainer from "./FormContainer";
 import FormInput from "./FormInput";
@@ -10,8 +10,8 @@ import { StackActions } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import { signIn } from "../api/user";
 
-const SignUpForm = ({ navigation }) => {
-  const {setIsLoggedIn, setProfile, setLoginPending} = useLogin();
+const SignUpForm = ({ navigation, scrollView }) => {
+  const { setIsLoggedIn, setProfile, setLoginPending } = useLogin();
 
   const [userInfo, setUserInfo] = useState({
     fullname: "James",
@@ -25,56 +25,70 @@ const SignUpForm = ({ navigation }) => {
 
   const handleOnChangeText = (value, inputType) => {
     setUserInfo({ ...userInfo, [inputType]: value });
-  }
+  };
 
   const isValidForm = () => {
     if (!isValidObjField(userInfo)) {
-        return updateError("Please fill in all fields", setError);
+      return updateError("Please fill in all fields", setError);
     }
     if (!fullname.trim() || fullname.length < 3) {
-        return updateError("Please enter a valid full name", setError);
+      return updateError("Please enter a valid full name", setError);
     }
     if (!isValidEmail(email)) {
-        return updateError("Please enter a valid email", setError);
+      return updateError("Please enter a valid email", setError);
     }
     if (!password.trim() || password.length < 8) {
-        return updateError("Please enter a valid password", setError);
+      return updateError("Please enter a valid password", setError);
     }
     if (password !== confirmPassword) {
-        return updateError("Passwords do not match", setError);
+      return updateError("Passwords do not match", setError);
     }
     return true;
-  }
+  };
 
   const submitForm = async () => {
     setLoginPending(true);
     if (isValidForm()) {
-        const res = await client.post('/create-user', userInfo);
+      const res = await client.post("/create-user", userInfo);
 
-        if (res.data.success) {
-            const signInRes = await signIn(email, password);
+      if (res.data.success) {
+        const signInRes = await signIn(email, password);
 
-            if (signInRes.data.success) {
-              setProfile(signInRes.data.user);
-              setIsLoggedIn(true);
-              navigation.dispatch(
-                  StackActions.replace('ImageUpload')
-              )
-            }
-            else {
-                updateError(signInRes.data.message, setError);
-            }
+        if (signInRes.data.success) {
+          setProfile(signInRes.data.user);
+          setIsLoggedIn(true);
+        } else {
+          updateError(signInRes.data.message, setError);
         }
-        else {
-            updateError(res.data.message, setError);
-        }
+      } else {
+        updateError(res.data.message, setError);
+      }
     }
     setLoginPending(false);
-  }
+  };
 
   return (
     <FormContainer>
-        {error && <Text style={{color: 'red', fontSize: 18, textAlign: "center"}}>{error}</Text>}
+      <Text
+        style={{
+          fontFamily: "PlusJakartaSansBold",
+          fontSize: 25,
+          textAlign: "center",
+          marginVertical: Platform.OS === "ios" ? 45 : 20,
+        }}
+      >
+        Create your account
+      </Text>
+      <Text
+        style={{
+          color: "red",
+          fontSize: 14,
+          fontFamily: "PlusJakartaSans",
+          textAlign: "center",
+        }}
+      >
+        {error}
+      </Text>
       <FormInput
         value={fullname}
         label="Full Name"
@@ -84,7 +98,7 @@ const SignUpForm = ({ navigation }) => {
       <FormInput
         value={email}
         autoCapitalize="none"
-        label="Email"
+        label="Company/Organization Email"
         onChangeText={(value) => handleOnChangeText(value, "email")}
         placeholder="example@email.com"
       />
@@ -104,6 +118,23 @@ const SignUpForm = ({ navigation }) => {
         onChangeText={(value) => handleOnChangeText(value, "confirmPassword")}
         placeholder="********"
       />
+      <Text
+        style={{
+          fontFamily: "PlusJakartaSansSemiBold",
+          fontSize: 14,
+          textAlign: "center",
+          marginVertical: 30,
+          color: "#95989D",
+        }}
+      >
+        Already have an account?{" "}
+        <Text
+          style={{ color: "#0B2C7F" }}
+          onPress={() => scrollView.current.scrollTo({ x: 0 })}
+        >
+          Sign in
+        </Text>
+      </Text>
       <FormSubmitButton title="Sign Up" onPress={submitForm} />
     </FormContainer>
   );

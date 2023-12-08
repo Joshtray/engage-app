@@ -9,8 +9,8 @@ import { StackActions } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import { signIn } from "../api/user";
 
-const LoginForm = ({ navigation }) => {
-  const {setIsLoggedIn, setProfile, setLoginPending} = useLogin();
+const LoginForm = ({ navigation, scrollView }) => {
+  const { setIsLoggedIn, setProfile, setIsVerified, setLoginPending } = useLogin();
   const [userInfo, setUserInfo] = useState({
     email: "email@email.com",
     password: "password",
@@ -39,20 +39,19 @@ const LoginForm = ({ navigation }) => {
   const submitForm = async () => {
     setLoginPending(true);
     if (isValidForm()) {
-        try {
-            const res = await signIn(email, password);
+      try {
+        const res = await signIn(email, password);
 
-            if (res.data.success) {
-                setProfile(res.data.user);
-                setIsLoggedIn(true);
-            }
-            else {
-                updateError(res.data.message, setError);
-            }
+        if (res.data.success) {
+          setProfile(res.data.user);
+          setIsLoggedIn(true);
+          setIsVerified(res.data.user.isVerified);
+        } else {
+          updateError(res.data.message, setError);
         }
-        catch (error) {
-            console.log(error);
-        }
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     setLoginPending(false);
@@ -60,7 +59,26 @@ const LoginForm = ({ navigation }) => {
 
   return (
     <FormContainer>
-        {error && <Text style={{color: 'red', fontSize: 18, fontFamily: "PlusJakartaSans", textAlign: "center"}}>{error}</Text>}
+      <Text
+        style={{
+          fontFamily: "PlusJakartaSansBold",
+          fontSize: 25,
+          textAlign: "center",
+          marginVertical: Platform.OS === "ios" ? 45 : 15,
+        }}
+      >
+        Sign In
+      </Text>
+      <Text
+        style={{
+          color: "red",
+          fontSize: 14,
+          fontFamily: "PlusJakartaSans",
+          textAlign: "center",
+        }}
+      >
+        {error}
+      </Text>
       <FormInput
         value={email}
         label="Email"
@@ -76,7 +94,26 @@ const LoginForm = ({ navigation }) => {
         autoCapitalize="none"
         secureTextEntry
       />
-      <FormSubmitButton onPress={submitForm} title="Login" />
+      <Text
+        style={{
+          fontFamily: "PlusJakartaSansSemiBold",
+          fontSize: 14,
+          textAlign: "center",
+          marginVertical: 30,
+          color: "#95989D",
+        }}
+      >
+        Don't have an account?{" "}
+        <Text
+          style={{ color: "#0B2C7F" }}
+          onPress={() =>
+            scrollView.current.scrollTo({ x: Dimensions.get("window").width })
+          }
+        >
+          Sign up
+        </Text>
+      </Text>
+      <FormSubmitButton onPress={submitForm} title="Sign in" />
     </FormContainer>
   );
 };

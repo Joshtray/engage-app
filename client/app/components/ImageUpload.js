@@ -9,7 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { updateError } from "../utils/methods";
 
 const ImageUpload = (props) => {
-  const {profile, setProfile, setIsLoggedIn } = useLogin();
+  const {profile, setProfile, setIsLoggedIn, setIsVerified } = useLogin();
 
   const [image, setImage] = useState(profile.avatar);
   const [progress, setProgress] = useState(0);
@@ -68,6 +68,7 @@ const ImageUpload = (props) => {
         }
         else {
           setIsLoggedIn(false);
+          setIsVerified(false);
         }
     }
     catch (err) {

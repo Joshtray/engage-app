@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, TextInput, Button, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -9,6 +9,9 @@ import FormHeader from "./FormHeader";
 import FormContainer from "./FormContainer";
 import client from "../api/client";
 import { updateError } from "../utils/methods";
+import FormSubmitButton from "./FormSubmitButton";
+import { Octicons } from "react-native-vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const CreateActivity = () => {
   const [name, setName] = useState("Test");
@@ -50,7 +53,7 @@ const CreateActivity = () => {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
-        }
+        },
       });
 
       if (res.data.success) {
@@ -64,12 +67,46 @@ const CreateActivity = () => {
   };
 
   return (
-    <View style={{display: "flex", justifyContent: "center", alignItems: "center", flex: 1}}>
-      <FormHeader
+    <View
+      style={{
+        height: Dimensions.get("window").height,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 1,
+        paddingTop: 150,
+        backgroundColor: "#fff",
+      }}
+    >
+      <View
+        style={{
+          width: "100%",
+        }}
+        >
+        <TouchableOpacity 
+        style={{
+          width: "100%",
+          paddingHorizontal: 30,
+        }} onPress={() => navigation.goBack()}>
+          <Octicons name="chevron-left" size={40} color="#0B2C7F" />
+        </TouchableOpacity>
+      </View>
+      <Text
+        style={{
+          fontFamily: "PlusJakartaSansBold",
+          fontSize: 25,
+          textAlign: "left",
+          marginVertical: 45,
+          // marginVertical: Platform.OS === "ios" ? 45 : 20,
+        }}
+      >
+        Post a new activity
+      </Text>
+      {/* <FormHeader
         leftHeading={"Create an Activity"}
         rightHeading={"Back"}
         subHeading={""}
-      />
+      /> */}
       <FormContainer
         style={{
           flex: 1,
@@ -78,12 +115,19 @@ const CreateActivity = () => {
           padding: 30,
         }}
       >
-        {error && <Text style={{color: 'red', fontSize: 18, textAlign: "center"}}>{error}</Text>}
+        {error && (
+          <Text style={{ color: "red", fontSize: 18, textAlign: "center" }}>
+            {error}
+          </Text>
+        )}
         <FormInput
           value={name}
-          label="Activity Name"
-          placeholder="Activity Name"
+          label="Activity Title"
+          placeholder="Activity Title"
           onChangeText={(value) => setName(value)}
+          style={{
+            fontSize: 12,
+          }}
         />
 
         <FormInput
@@ -100,7 +144,15 @@ const CreateActivity = () => {
           onChangeText={(value) => setLocation(value)}
         />
 
-        <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+        <Text
+          style={{
+            textAlign: "left",
+            fontFamily: "PlusJakartaSansBold",
+            color: "#95989D",
+            fontSize: 16,
+            marginBottom: 10,
+          }}
+        >
           Date and Time
         </Text>
         <View
@@ -126,9 +178,8 @@ const CreateActivity = () => {
             }}
           />
         </View>
-
-        <Button title="Submit" onPress={handleSubmit} />
       </FormContainer>
+      <FormSubmitButton onPress={handleSubmit} title="Create Activity" />
     </View>
   );
 };

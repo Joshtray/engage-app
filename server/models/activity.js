@@ -18,10 +18,10 @@ const activitySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // attendees: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User'
-    // }]
+    participants: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
 });
 
 module.exports = mongoose.model('Activity', activitySchema);

@@ -1,3 +1,10 @@
 import axios from "axios";
+import Constants from "expo-constants";
 
-export default axios.create({ baseURL: 'http://10.112.20.80:8000'})
+const { expoConfig } = Constants;
+
+export default axios.create({ 
+    baseURL: `http://${expoConfig?.hostUri
+    ? expoConfig.hostUri.split(`:`).shift()
+    : `localhost`}:8000`
+});

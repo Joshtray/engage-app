@@ -8,15 +8,22 @@ import LoginProvider, { useLogin } from "./app/context/LoginProvider";
 import { useFonts } from "expo-font";
 import AppLoader from "./app/components/AppLoader";
 import CreateActivity from "./app/components/CreateActivity";
-import { setCustomText, setCustomTextInput, setCustomView, setCustomTouchableOpacity } from 'react-native-global-props';
+import {
+  setCustomText,
+} from "react-native-global-props";
+import VerifyEmail from "./app/components/VerifyEmail";
 
 const Stack = createStackNavigator();
 
 const StackNavigator = ({ navigation }) => {
-  const { isLoggedIn, loginPending } = useLogin();
+  const { isLoggedIn, loginPending, isVerified } = useLogin();
 
   const [loaded] = useFonts({
-    PlusJakartaSans: require("./assets/fonts/PlusJakartaSans-VariableFont_wght.ttf"),
+    PlusJakartaSans: require("./assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular.ttf"),
+    PlusJakartaSansMedium: require("./assets/fonts/PlusJakartaSans/PlusJakartaSans-Medium.ttf"),
+    PlusJakartaSansBold: require("./assets/fonts/PlusJakartaSans/PlusJakartaSans-Bold.ttf"),
+    PlusJakartaSansExtraBold: require("./assets/fonts/PlusJakartaSans/PlusJakartaSans-ExtraBold.ttf"),
+    PlusJakartaSansSemiBold: require("./assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold.ttf"),
   });
 
   if (!loaded) {
@@ -25,20 +32,29 @@ const StackNavigator = ({ navigation }) => {
 
   return (
     <>
-        {isLoggedIn ? (
+      {isLoggedIn ? (
+        isVerified ? (
           <>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
-            <Stack.Screen name="ImageUpload" component={ImageUpload} />
-            <Stack.Screen name="CreateActivity" component={CreateActivity} />
-          </Stack.Navigator>
-          {loginPending && <AppLoader />}
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                name="DrawerNavigator"
+                component={DrawerNavigator}
+              />
+              <Stack.Screen name="ImageUpload" component={ImageUpload} />
+              <Stack.Screen name="CreateActivity" component={CreateActivity} />
+            </Stack.Navigator>
+            {loginPending && <AppLoader />}
           </>
         ) : (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="AppForm" component={AppForm} />
+            <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
           </Stack.Navigator>
-        )}
+        )
+      ) : (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="AppForm" component={AppForm} />
+        </Stack.Navigator>
+      )}
     </>
   );
 };
@@ -46,27 +62,27 @@ const StackNavigator = ({ navigation }) => {
 export default function App() {
   setCustomText({
     style: {
-      fontFamily: 'PlusJakartaSans',
-    }
+      fontFamily: "PlusJakartaSans",
+    },
   });
 
-  setCustomTextInput({
-    style: {
-      fontFamily: 'PlusJakartaSans',
-    }
-  });
+  // setCustomTextInput({
+  //   style: {
+  //     fontFamily: 'PlusJakartaSans',
+  //   }
+  // });
 
-  setCustomView({
-    style: {
-      fontFamily: 'PlusJakartaSans',
-    }
-  });
+  // setCustomView({
+  //   style: {
+  //     fontFamily: 'PlusJakartaSans',
+  //   }
+  // });
 
-  setCustomTouchableOpacity({
-    style: {
-      fontFamily: 'PlusJakartaSans',
-    }
-  });
+  // setCustomTouchableOpacity({
+  //   style: {
+  //     fontFamily: 'PlusJakartaSans',
+  //   }
+  // });
 
   return (
     <LoginProvider>
