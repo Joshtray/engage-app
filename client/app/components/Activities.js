@@ -36,6 +36,13 @@ const Activities = ({ navigation }) => {
       })
       .then((response) => {
         if (response.data.success) {
+          setProfile({
+            ...profile,
+            activities: response.data.activities.map(
+              (activity) => activity._id
+            ),
+          });
+
           response.data.activities.forEach((activity) => {
             registeredActivityMap[activity._id] = activity;
           });

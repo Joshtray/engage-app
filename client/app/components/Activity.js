@@ -46,7 +46,10 @@ const Activity = ({ route, navigation }) => {
       )
       .then((res) => {
         if (res.data.success) {
-          setProfile({ ...profile, activities: [...profile.activities, activity._id] });
+          setProfile({
+            ...profile,
+            activities: [...profile.activities, activity._id],
+          });
           navigation.goBack();
         } else {
           console.log(res.data.message);
@@ -93,6 +96,7 @@ const Activity = ({ route, navigation }) => {
 
   const checkIfJoined = () => {
     const joinedActivities = profile.activities;
+    // Check if joinedActivities has the activity id or has an object with the activity id
     if (joinedActivities?.includes(activity._id)) {
       setJoined(true);
     }
