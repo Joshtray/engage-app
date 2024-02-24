@@ -18,14 +18,19 @@ import client from "../api/client";
 import FormSubmitButton from "./FormSubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackActions } from "@react-navigation/native";
-import { signOut } from "../api/user";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 const VerifyEmail = ({ navigation }) => {
   const [alert, setAlert] = useState("");
   const [alertType, setAlertType] = useState(null);
-  const { setIsLoggedIn, setIsVerified, loginPending, setLoginPending } =
-    useLogin();
+  const {
+    setIsLoggedIn,
+    setIsVerified,
+    setIsRegistered,
+    loginPending,
+    setLoginPending,
+    logOut,
+  } = useLogin();
 
   const width = Dimensions.get("window").width;
 
@@ -50,7 +55,22 @@ const VerifyEmail = ({ navigation }) => {
       if (res.data.success) {
         setIsVerified(res.data.user.isVerified);
         if (res.data.user.isVerified) {
-          navigation.dispatch(StackActions.replace("ImageUpload"));
+          const companyId = res.data.user.company;
+          if (companyId) {
+            const companyRes = await client.get(`/companies/${companyId}`, {
+              headers: {
+                Authorization: res.data.token,
+              },
+            });
+
+            if (companyRes.data.success) {
+              setIsRegistered(true);
+            } else {
+              setIsRegistered(false);
+            }
+          } else {
+            setIsRegistered(false);
+          }
         } else {
           setAlert("Email has not yet been verified");
           setAlertType("alert");
@@ -182,23 +202,14 @@ const VerifyEmail = ({ navigation }) => {
           style={{
             color: "#0B2C7F",
             position: "absolute",
-            bottom: 30,
+            bottom: 20,
             left: 0,
             right: 0,
             textAlign: "center",
             fontFamily: "PlusJakartaSansMedium",
             fontSize: 14,
           }}
-          onPress={async () => {
-            setLoginPending(true);
-            const isLoggedOut = await signOut();
-
-            if (isLoggedOut) {
-              setIsLoggedIn(false);
-              setIsVerified(false);
-            }
-            setLoginPending(false);
-          }}
+          onPress={logOut}
         >
           Sign in with a different account
         </Text>

@@ -5,6 +5,7 @@ const activitySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    image: String,
     name: {
         type: String,
         required: true
@@ -22,6 +23,10 @@ const activitySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company'
+    }
 });
 
 module.exports = mongoose.model('Activity', activitySchema);

@@ -12,13 +12,53 @@ import client from "../api/client";
 import ActivityListing from "./ActivityListing";
 import AppLoader from "./AppLoader";
 import { ScrollView } from "react-native-gesture-handler";
-import { Entypo } from "react-native-vector-icons";
+import { Entypo, Feather } from "react-native-vector-icons";
 import { useLogin } from "../context/LoginProvider";
-import { FontAwesome, SimpleLineIcons } from "react-native-vector-icons";
+import { Ionicons } from "react-native-vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns";
 
 const Home = ({ navigation }) => {
+  const [loading, setLoading] = useState(false);
+  const [match, setMatch] = useState({});
+
+  const getMatch = async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await client
+        .get("/generate-match", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((res) => {
+          if (res.data.success) {
+            setMatch(res.data.match);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getMatch();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      getMatch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   // const { loginPending, setLoginPending } = useLogin();
   // const [activities, setActivities] = useState([]);
   // const [myActivities, setMyActivities] = useState({});
@@ -94,9 +134,7 @@ const Home = ({ navigation }) => {
               // key={id}
               style={{
                 width: "100%",
-                height: 120,
-                marginRight: 20,
-                marginVertical: 5,
+                height: 150,
                 borderWidth: 1,
                 borderRadius: 20,
                 borderColor: "#A2B7D3",
@@ -106,14 +144,155 @@ const Home = ({ navigation }) => {
                 justifyContent: "center",
               }}
             >
-              <Text
-                style={{
-                  fontFamily: "PlusJakartaSansBold",
-                  fontSize: 16,
-                }}
-              >
-                Coming soon!
-              </Text>
+              {loading ? (
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSansBold",
+                    fontSize: 16,
+                    color: "#0B2C7F",
+                  }}
+                >
+                  Loading...
+                </Text>
+              ) : (
+                <View
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                      width: "100%",
+                      flex: 1,
+                      padding: 20,
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: match.avatar,
+                      }}
+                      style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 30,
+                      }}
+                    />
+                    <View
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "flex-start",
+                        marginLeft: 20,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: "PlusJakartaSansBold",
+                          fontSize: 16,
+                          color: "#0B2C7F",
+                        }}
+                      >
+                        {match.fullname}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "PlusJakartaSans",
+                          fontSize: 12,
+                        }}
+                      >
+                        {match.email}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "35%",
+                      width: "100%",
+                      borderBottomLeftRadius: 20,
+                      borderBottomRightRadius: 20,
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                        width: "50%",
+                      }}
+                    >
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: "50%",
+                          width: "100%",
+                          borderRightWidth: 0.5,
+                          borderColor: "#A2B7D3",
+                        }}
+                      >
+                        <Feather name="check" size={24} color="#34A853" />
+                        <Text
+                          style={{
+                            fontFamily: "PlusJakartaSansSemiBold",
+                            fontSize: 14,
+                            marginLeft: 10,
+                          }}
+                        >
+                          Accept
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                        width: "50%",
+                      }}
+                    >
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: "50%",
+                          width: "100%",
+                          borderLeftWidth: 0.5,
+                          borderColor: "#A2B7D3",
+                        }}
+                      >
+                        <Ionicons name="close" size={24} color="#EA4335" />
+                        <Text
+                          style={{
+                            fontFamily: "PlusJakartaSansSemiBold",
+                            fontSize: 14,
+                            marginLeft: 10,
+                          }}
+                        >
+                          Reject
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
             </View>
           </View>
           <View

@@ -17,38 +17,55 @@ import { useLogin } from "../context/LoginProvider";
 import { FontAwesome, SimpleLineIcons } from "react-native-vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns";
+import RegisteredActivityListing from "./RegisteredActivityListing";
 
 const Activities = ({ navigation }) => {
-  const { loginPending, setLoginPending } = useLogin();
+  const { loginPending, setLoginPending, profile, setProfile } = useLogin();
   const [activities, setActivities] = useState([]);
-  const [myActivities, setMyActivities] = useState({});
+  const [registeredActivities, setRegisteredActivities] = useState({});
 
   const getActivities = async () => {
     setLoginPending(true);
     const token = await AsyncStorage.getItem("token");
-    const response = await client.get("/my-activities", {
-      headers: {
-        Authorization: token,
-      },
-    });
-    let myActivityMap = {};
-    if (response.data.success) {
-      response.data.activities.forEach((activity) => {
-        myActivityMap[activity._id] = activity;
-      });
-      setMyActivities(myActivityMap);
-    }
-
-    const res = await client.get("/activities");
-    let activityMap = [];
-    if (res.data.success) {
-      res.data.activities.forEach((activity) => {
-        if (!myActivityMap[activity._id]) {
-          activityMap.push(activity);
+    let registeredActivityMap = {};
+    await client
+      .get("/registered-activities", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        if (response.data.success) {
+          response.data.activities.forEach((activity) => {
+            registeredActivityMap[activity._id] = activity;
+          });
+          setRegisteredActivities(registeredActivityMap);
         }
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
       });
-      setActivities(activityMap);
-    }
+
+    await client
+      .get("/activities", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        let activityMap = [];
+        if (res.data.success) {
+          res.data.activities.forEach((activity) => {
+            if (!registeredActivityMap[activity._id]) {
+              activityMap.push(activity);
+            }
+          });
+          setActivities(activityMap);
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+      });
     setLoginPending(false);
   };
 
@@ -148,7 +165,8 @@ const Activities = ({ navigation }) => {
               Your upcoming activities:
             </Text>
             {loginPending ||
-              ((myActivities && Object.keys(myActivities).length > 0) ? (
+              (registeredActivities &&
+              Object.keys(registeredActivities).length > 0 ? (
                 <ScrollView
                   style={{
                     width: "100%",
@@ -163,103 +181,17 @@ const Activities = ({ navigation }) => {
                   }}
                   showsHorizontalScrollIndicator={false}
                 >
-                  {Object.keys(myActivities).map((id) => (
-                    <View
+                  {Object.keys(registeredActivities).map((id) => (
+                    <RegisteredActivityListing
+                      activity={registeredActivities[id]}
                       key={id}
-                      style={{
-                        width: 150,
-                        height: 150,
-                        marginRight: 20,
-                        marginVertical: 5,
-                        borderWidth: 1,
-                        borderRadius: 20,
-                        borderColor: "#A2B7D3",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: "100%",
-                          height: "60%",
-                          backgroundColor: "#A2B7D3",
-                          borderTopLeftRadius: 20,
-                          borderTopRightRadius: 20,
-                        }}
-                      >
-                        <Image
-                          source={{
-                            uri: "https://img.freepik.com/free-photo/people-having-fun-wedding-hall_1303-19593.jpg?w=1800&t=st=1702013128~exp=1702013728~hmac=3de0e03364fbdec43b157e208a9765e85ea06fe930ac4b33b459ed05c9388871",
-                          }}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          width: "100%",
-                          height: "40%",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          // alignItems: "center",
-                          alignItems: "space-between",
-                          padding: 10,
-                        }}
-                      >
-                        <View
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            columnGap: 5,
-                          }}
-                        >
-                          {/* <SimpleLineIcons
-                            name="location-pin"
-                            size={14}
-                            color="#0B2C7F"
-                          /> */}
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              fontSize: 12,
-                              fontFamily: "PlusJakartaSansMedium",
-                              textAlign: "center",
-                            }}
-                          >
-                            {format(
-                              new Date(myActivities[id].date),
-                              "HH:MM     dd-MMM-yy"
-                            )}
-                          </Text>
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "#0B2C7F",
-                            fontFamily: "PlusJakartaSansSemiBold",
-                          }}
-                        >
-                          {myActivities[id].name}
-                        </Text>
-                      </View>
-                    </View>
+                      navigation={navigation}
+                    />
                   ))}
                 </ScrollView>
               ) : (
                 <View
                   style={{
-                    // width: "100%",
-                    // width: 100,
-                    // height: 100,
-                    // borderWidth: 1,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -267,16 +199,25 @@ const Activities = ({ navigation }) => {
                     flex: 1,
                   }}
                 >
-                  <Text style={{
-                    fontFamily: "PlusJakartaSansMedium",
-                    color: "#3C3C43",
-                    opacity: 0.6,
-                    fontSize: 16,
-                  }}>No activities yet</Text>
+                  <Text
+                    style={{
+                      fontFamily: "PlusJakartaSansMedium",
+                      color: "#3C3C43",
+                      opacity: 0.6,
+                      fontSize: 16,
+                    }}
+                  >
+                    No activities yet
+                  </Text>
                 </View>
               ))}
           </View>
-          <View>
+          <View
+            style={{
+              marginBottom: 20,
+              minHeight: 150,
+            }}
+          >
             <Text
               style={{
                 fontSize: 20,
@@ -286,21 +227,43 @@ const Activities = ({ navigation }) => {
             >
               Recommended for you:
             </Text>
-            {loginPending || (
-              <ScrollView
-                style={{ width: "100%" }}
-                showsVerticalScrollIndicator={false}
-              >
-                {activities.map((activity) => (
-                  <ActivityListing
-                    navigation={navigation}
-                    getActivities={getActivities}
-                    {...activity}
-                    key={activity._id}
-                  />
-                ))}
-              </ScrollView>
-            )}
+            {loginPending ||
+              (activities && Object.keys(activities).length > 0 ? (
+                <ScrollView
+                  style={{ width: "100%" }}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {activities.map((activity) => (
+                    <ActivityListing
+                      navigation={navigation}
+                      getActivities={getActivities}
+                      activity={activity}
+                      key={activity._id}
+                    />
+                  ))}
+                </ScrollView>
+              ) : (
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flex: 1,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: "PlusJakartaSansMedium",
+                      color: "#3C3C43",
+                      opacity: 0.6,
+                      fontSize: 16,
+                    }}
+                  >
+                    No activities yet
+                  </Text>
+                </View>
+              ))}
           </View>
         </View>
       </ScrollView>

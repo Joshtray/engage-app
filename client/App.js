@@ -8,15 +8,18 @@ import LoginProvider, { useLogin } from "./app/context/LoginProvider";
 import { useFonts } from "expo-font";
 import AppLoader from "./app/components/AppLoader";
 import CreateActivity from "./app/components/CreateActivity";
-import {
-  setCustomText,
-} from "react-native-global-props";
+import { setCustomText } from "react-native-global-props";
 import VerifyEmail from "./app/components/VerifyEmail";
+import CompanyNotFound from "./app/components/CompanyNotFound";
+import Profile from "./app/components/Profile";
+import Activity from "./app/components/Activity";
+import MyActivity from "./app/components/MyActivity";
+import EditActivity from "./app/components/EditActivity";
 
 const Stack = createStackNavigator();
 
 const StackNavigator = ({ navigation }) => {
-  const { isLoggedIn, loginPending, isVerified } = useLogin();
+  const { isLoggedIn, loginPending, isVerified, isRegistered } = useLogin();
 
   const [loaded] = useFonts({
     PlusJakartaSans: require("./assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular.ttf"),
@@ -34,17 +37,33 @@ const StackNavigator = ({ navigation }) => {
     <>
       {isLoggedIn ? (
         isVerified ? (
-          <>
+          isRegistered ? (
+            <>
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen
+                  name="DrawerNavigator"
+                  component={DrawerNavigator}
+                />
+                <Stack.Screen name="ImageUpload" component={ImageUpload} />
+                <Stack.Screen
+                  name="CreateActivity"
+                  component={CreateActivity}
+                />
+                <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="Activity" component={Activity} />
+                <Stack.Screen name="MyActivity" component={MyActivity} />
+                <Stack.Screen name="EditActivity" component={EditActivity} />
+              </Stack.Navigator>
+              {loginPending && <AppLoader />}
+            </>
+          ) : (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen
-                name="DrawerNavigator"
-                component={DrawerNavigator}
+                name="CompanyNotFound"
+                component={CompanyNotFound}
               />
-              <Stack.Screen name="ImageUpload" component={ImageUpload} />
-              <Stack.Screen name="CreateActivity" component={CreateActivity} />
             </Stack.Navigator>
-            {loginPending && <AppLoader />}
-          </>
+          )
         ) : (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
@@ -65,24 +84,6 @@ export default function App() {
       fontFamily: "PlusJakartaSans",
     },
   });
-
-  // setCustomTextInput({
-  //   style: {
-  //     fontFamily: 'PlusJakartaSans',
-  //   }
-  // });
-
-  // setCustomView({
-  //   style: {
-  //     fontFamily: 'PlusJakartaSans',
-  //   }
-  // });
-
-  // setCustomTouchableOpacity({
-  //   style: {
-  //     fontFamily: 'PlusJakartaSans',
-  //   }
-  // });
 
   return (
     <LoginProvider>

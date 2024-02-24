@@ -8,12 +8,12 @@ import {
 } from "react-native";
 import React from "react";
 
-const FormContainer = ({ children }) => {
+const FormContainer = ({ children, style }) => {
   return (
     <KeyboardAvoidingView
       enabled
-      behavior={Platform.OS === "ios" ? "padding" : null}
-      style={styles.container}
+      behavior="padding"
+      style={{...styles.container, ...style}}
     >
       {children}
     </KeyboardAvoidingView>

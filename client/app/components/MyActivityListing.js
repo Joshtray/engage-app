@@ -20,56 +20,26 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLogin } from "../context/LoginProvider";
 import registerAlert from "../alerts/registerAlert";
+import deleteActivityAlert from "../alerts/deleteActivityAlert";
 
-const ActivityListing = (props) => {
-  const { navigation, getActivities, activity } = props;
-  const { setLoginPending, profile, setProfile } = useLogin();
-  const [owner, setOwner] = useState({});
+const MyActivityListing = (props) => {
+  const { navigation, getMyActivities, activity } = props;
+  const { loginPending, setLoginPending } = useLogin();
 
-  const getOwner = async () => {
+  const deleteActivity = async () => {
+    setLoginPending(true);
     const token = await AsyncStorage.getItem("token");
-    const res = await client.get(`/users/${activity.owner}`, {
+    const res = await client.post("/delete-activity", { id: activity._id }, {
       headers: {
         Authorization: token,
       },
     });
     if (res.data.success) {
-      setOwner(res.data.user);
+      getMyActivities();
     }
-  };
-
-  const joinActivity = async () => {
-    setLoginPending(true);
-    const token = await AsyncStorage.getItem("token");
-    await client
-      .post(
-        "/register",
-        { id: activity._id },
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.success) {
-          setProfile({ ...profile, activities: [...profile.activities, activity._id] });
-          getActivities();
-        } else {
-          console.log(res.data.message);
-        }
-      })
-      .catch((error) => {
-        console.log(error.response.data.message);
-      });
     setLoginPending(false);
-  };
+  }
 
-  useEffect(() => {
-    getOwner();
-  }, []);
   return (
     <>
       <TouchableOpacity
@@ -80,16 +50,13 @@ const ActivityListing = (props) => {
           alignItems: "center",
           padding: 2,
           borderColor: "#A2B7D3",
-          borderWidth: 0.5,
-          borderRadius: 20,
-          marginVertical: 10,
+          borderTopWidth: 0.5,
+          paddingVertical: 20,
+          // borderRadius: 20,
+          // marginVertical: 10,
         }}
         onPress={() => {
-          if (activity.owner === profile._id) {
-            navigation.navigate("MyActivity", { activity });
-          } else {
-            navigation.navigate("Activity", { activity, owner });
-          }
+          navigation.navigate("MyActivity", { activity });
         }}
       >
         <View
@@ -117,7 +84,7 @@ const ActivityListing = (props) => {
               style={{
                 maxWidth: "100%",
                 height: "100%",
-                borderRadius: 20,
+                // borderRadius: 10,
                 borderBottomRightRadius: 0,
                 borderTopRightRadius: 0,
               }}
@@ -162,49 +129,6 @@ const ActivityListing = (props) => {
                 {activity.name}
               </Text>
             </View>
-            <TouchableOpacity
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                marginRight: 20,
-              }}
-              onPress={() => {
-                navigation.navigate("Profile", { user: owner });
-              }}
-            >
-              {owner.avatar ? (
-                <Image
-                  source={{ uri: owner.avatar }}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: 100,
-                    marginRight: 5,
-                  }}
-                />
-              ) : (
-                <Image
-                  source={require("../../assets/icon.png")}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: 100,
-                    marginRight: 5,
-                  }}
-                />
-              )}
-              <Text
-                style={{
-                  fontSize: 12,
-                  textAlign: "center",
-                  fontFamily: "PlusJakartaSansSemiBold",
-                }}
-              >
-                {owner.fullname}
-              </Text>
-            </TouchableOpacity>
           </View>
           <View
             style={{
@@ -329,8 +253,25 @@ const ActivityListing = (props) => {
         </View>
         <TouchableOpacity
           style={{
-            width: 40,
-            height: 40,
+            width: 35,
+            height: 35,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 10,
+          }}
+          onPress={() => navigation.navigate("EditActivity", { activity })}
+        >
+          <FontAwesome
+            name="edit"
+            size={30}
+            color="#0B2C7F"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            width: 35,
+            height: 35,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -338,13 +279,14 @@ const ActivityListing = (props) => {
             borderRadius: 10,
             marginRight: 10,
             borderColor: "rgba(162, 183, 211, 0.5)",
+            backgroundColor: "#EA4335",
           }}
-          onPress={() => registerAlert(activity, joinActivity)}
+          onPress={() => deleteActivityAlert(activity, deleteActivity)}
         >
           <MaterialCommunityIcons
-            name="pencil-plus-outline"
-            size={30}
-            color="#0B2C7F"
+            name="delete-outline"
+            size={25}
+            color="white"
           />
         </TouchableOpacity>
         {/* <View style={{}}>
@@ -368,10 +310,11 @@ const ActivityListing = (props) => {
           </Text>
         </View> */}
       </TouchableOpacity>
+      {loginPending && <AppLoader />}
     </>
   );
 };
 
-export default ActivityListing;
+export default MyActivityListing;
 
 const styles = StyleSheet.create({});

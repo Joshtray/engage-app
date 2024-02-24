@@ -7,11 +7,14 @@ import { StackActions } from "@react-navigation/native";
 import UploadProgress from "./UploadProgress";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { updateError } from "../utils/methods";
+import AppLoader from "./AppLoader";
+import FormSubmitButton from "./FormSubmitButton";
 
 const ImageUpload = (props) => {
-  const {profile, setProfile, setIsLoggedIn, setIsVerified } = useLogin();
+  const { profile, setProfile, setIsLoggedIn, setIsVerified } = useLogin();
 
   const [image, setImage] = useState(profile.avatar);
+  const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
 
@@ -37,6 +40,7 @@ const ImageUpload = (props) => {
   };
 
   const uploadImage = async () => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("profile", {
       name: new Date() + "_profile",
@@ -45,78 +49,78 @@ const ImageUpload = (props) => {
     });
 
     try {
-        const token = await AsyncStorage.getItem("token");
+      const token = await AsyncStorage.getItem("token");
 
-        if (token) {
-          const response = await client.post("/upload-profile", formData, {
-              headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'multipart/form-data',
-                   Authorization: token
-              },
-              onUploadProgress: ({ loaded, total }) => {
-                  setProgress(loaded / total);
-              }
-          });
-  
-          if (response.data.success) {
-            setProfile({...profile, avatar: image});
-              props.navigation.dispatch(
-                StackActions.replace('DrawerNavigator')
-            )
-          }
+      if (token) {
+        const response = await client.post("/upload-profile", formData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+            Authorization: token,
+          },
+          onUploadProgress: ({ loaded, total }) => {
+            console.log(loaded, total);
+            setProgress(loaded / total);
+          },
+        });
+
+        if (response.data.success) {
+          setProfile({ ...profile, avatar: image });
+          props.navigation.dispatch(StackActions.replace("DrawerNavigator"));
         }
-        else {
-          setIsLoggedIn(false);
-          setIsVerified(false);
-        }
-    }
-    catch (err) {
+      } else {
+        setIsLoggedIn(false);
+        setIsVerified(false);
+      }
+    } catch (err) {
       updateError(err.message, setError);
       console.log(err);
+    } finally {
+      setLoading(false);
     }
-
   };
 
   return (
     <>
       <View style={styles.container}>
-        {error && <Text style={{color: 'red', fontSize: 18, textAlign: "center"}}>{error}</Text>}
+        {error && (
+          <Text style={{ color: "red", fontSize: 18, textAlign: "center" }}>
+            {error}
+          </Text>
+        )}
         <View>
           <TouchableOpacity
             onPress={openImageLibrary}
             style={styles.uploadButtonContainer}
           >
             {image ? (
-              <Image source={{ uri: image }} style={{width: '100%', height: '100%'}} />
-              ) : (
-                <Text style={styles.uploadButton}>Upload Profile Image</Text>
-                )}
+              <Image
+                source={{ uri: image }}
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <Text style={styles.uploadButton}>Upload Profile Image</Text>
+            )}
             {progress ? <UploadProgress progress={progress} /> : null}
           </TouchableOpacity>
-          <Text style={styles.skip} onPress={
-            () => props.navigation.dispatch(
-              StackActions.replace('DrawerNavigator')
-              )
-            }>Skip</Text>
-          {image && (
-            <TouchableOpacity onPress={uploadImage} disabled={progress > 0}>
-            <Text
-            style={{
-              ...styles.skip,
-              color: "white",
-              backgroundColor: "green",
-              borderRadius: 8,
-              opacity: 1,
-              fontFamily: "PlusJakartaSans", 
-            }}
-            >
-              Upload
-            </Text>
-            </TouchableOpacity>
-          )}
+          <Text
+            style={styles.skip}
+            onPress={() =>
+              props.navigation.dispatch(StackActions.replace("DrawerNavigator"))
+            }
+          >
+            Skip
+          </Text>
         </View>
+          {image && (
+            <FormSubmitButton
+              onPress={uploadImage}
+              disabled={progress > 0}
+              title="Upload"
+            />
+          )}
       </View>
+      {loading && <AppLoader />}
     </>
   );
 };
@@ -140,14 +144,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     opacity: 0.3,
     fontWeight: "bold",
-    fontFamily: "PlusJakartaSans", 
+    fontFamily: "PlusJakartaSans",
   },
   skip: {
     textAlign: "center",
     padding: 20,
     fontSize: 16,
     fontWeight: "bold",
-    fontFamily: "PlusJakartaSans", 
+    fontFamily: "PlusJakartaSans",
     textTransform: "uppercase",
     letterSpacing: 2,
     opacity: 0.5,

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const Domain = require("../models/domain");
 const sharp = require("sharp");
 const cloudinary = require("../helper/imageUpload");
 const nodemailer = require("nodemailer");
@@ -12,11 +13,17 @@ exports.createUser = async (req, res) => {
   if (userExists)
     return res.json({ success: false, message: "Email is already in use." });
   const emailToken = crypto.randomBytes(64).toString("hex");
+
+  const domain = await Domain.findOne({ name: email.split("@")[1] });
+  
+  const company = domain ? domain.company : null;
+
   const user = await User({
     fullname,
     email,
     password,
     emailToken,
+    company,
   });
   await user.save();
   this.sendEmail(user.email, user.fullname, emailToken);
@@ -73,6 +80,7 @@ exports.userSignIn = async (req, res) => {
     email: user.email,
     avatar: user.avatar || "",
     isVerified: user.isVerified,
+    company: user.company,
   };
 
   res.json({

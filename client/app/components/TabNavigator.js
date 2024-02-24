@@ -84,7 +84,7 @@ const TabNavigator = () => {
       >
         <Tab.Screen
           name="Home"
-          component={Activities}
+          component={Home}
           options={{
             tabBarIcon: ({ focused }) => (
               <View style={{}}>
@@ -95,7 +95,7 @@ const TabNavigator = () => {
           listeners={({ navigation, route }) => ({
             tabPress: (e) => {
               Animated.spring(tabOffsetValue, {
-                toValue: (Dimensions.get("window").width / 4),
+                toValue: 0,
                 useNativeDriver: true,
               }).start();
             },
@@ -103,7 +103,7 @@ const TabNavigator = () => {
         />
         <Tab.Screen
           name="Activities"
-          component={Home}
+          component={Activities}
           options={{
             tabBarIcon: ({ focused }) => (
               <View style={{}}>
@@ -114,7 +114,7 @@ const TabNavigator = () => {
           listeners={({ navigation, route }) => ({
             tabPress: (e) => {
               Animated.spring(tabOffsetValue, {
-                toValue: 0,
+                toValue: Dimensions.get("window").width / 4,
                 useNativeDriver: true,
               }).start();
             },

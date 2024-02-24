@@ -112,7 +112,7 @@ const CommunityListing = (props) => {
               justifyContent: "center",
               alignItems: "center",
             }}
-            onPress={async () => {
+            onPress={joined ? () => {} : async () => {
               setLoginPending(true);
               const token = await AsyncStorage.getItem("token");
               const res = await client.post(

@@ -35,6 +35,25 @@ const userSchema = new mongoose.Schema({
       ref: "Community",
     },
   ],
+  company: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+  },
+  interests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag",
+    },
+  ],
+  connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  sentRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  chatRooms: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ChatRoom",
+    },
+  ],
 });
 
 userSchema.pre("save", function (next) {
@@ -49,15 +68,14 @@ userSchema.pre("save", function (next) {
 });
 
 userSchema.methods.comparePassword = async function (password) {
-    if (!password) throw new Error("You must provide a password.");
-  
-    try {
-        const result = bcrypt.compare(password, this.password);
-        return result;
-    }
-    catch (err) {
-        console.log("comparePassword error: ", err);
-    }
+  if (!password) throw new Error("You must provide a password.");
+
+  try {
+    const result = bcrypt.compare(password, this.password);
+    return result;
+  } catch (err) {
+    console.log("comparePassword error: ", err);
+  }
 };
 
 userSchema.statics.isThisEmailInUse = async function (email) {

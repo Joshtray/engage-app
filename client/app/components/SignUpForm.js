@@ -11,11 +11,17 @@ import { useLogin } from "../context/LoginProvider";
 import { signIn } from "../api/user";
 
 const SignUpForm = ({ navigation, scrollView }) => {
-  const { setIsLoggedIn, setProfile, setLoginPending } = useLogin();
+  const {
+    setIsLoggedIn,
+    setProfile,
+    setLoginPending,
+    setIsVerified,
+    setIsRegistered,
+  } = useLogin();
 
   const [userInfo, setUserInfo] = useState({
     fullname: "James",
-    email: "james@email.com",
+    email: "jesseyuchenwichi@gmail.com",
     password: "password",
     confirmPassword: "password",
   });
@@ -57,6 +63,22 @@ const SignUpForm = ({ navigation, scrollView }) => {
         if (signInRes.data.success) {
           setProfile(signInRes.data.user);
           setIsLoggedIn(true);
+          setIsVerified(signInRes.data.user.isVerified);
+          const companyId = signInRes.data.user.company;
+          if (companyId) {
+            const companyRes = await client.get(`/companies/${companyId}`, {
+              headers: {
+                Authorization: res.data.token,
+              },
+            });
+            if (companyRes.data.success) {
+              setIsRegistered(true);
+            } else {
+              setIsRegistered(false);
+            }
+          } else {
+            setIsRegistered(false);
+          }
         } else {
           updateError(signInRes.data.message, setError);
         }
