@@ -75,14 +75,8 @@ exports.userSignIn = async (req, res) => {
     expiresIn: "1d",
   });
 
-  const userInfo = {
-    _id: user._id,
-    fullname: user.fullname,
-    email: user.email,
-    avatar: user.avatar || "",
-    isVerified: user.isVerified,
-    company: user.company,
-  };
+  const { password: userPassword, emailToken, ...userInfo } = user._doc;
+  userInfo.avatar = user.avatar || "";
 
   res.json({
     success: true,
