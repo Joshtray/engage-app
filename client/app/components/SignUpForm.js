@@ -11,13 +11,8 @@ import { useLogin } from "../context/LoginProvider";
 import { signIn } from "../api/user";
 
 const SignUpForm = ({ navigation, scrollView }) => {
-  const {
-    setIsLoggedIn,
-    setProfile,
-    setLoginPending,
-    setIsVerified,
-    setIsRegistered,
-  } = useLogin();
+  const { setIsLoggedIn, setProfile, setLoginPending, setIsVerified } =
+    useLogin();
 
   const [userInfo, setUserInfo] = useState({
     fullname: "James",
@@ -64,21 +59,6 @@ const SignUpForm = ({ navigation, scrollView }) => {
           setProfile(signInRes.data.user);
           setIsLoggedIn(true);
           setIsVerified(signInRes.data.user.isVerified);
-          const companyId = signInRes.data.user.company;
-          if (companyId) {
-            const companyRes = await client.get(`/companies/${companyId}`, {
-              headers: {
-                Authorization: res.data.token,
-              },
-            });
-            if (companyRes.data.success) {
-              setIsRegistered(true);
-            } else {
-              setIsRegistered(false);
-            }
-          } else {
-            setIsRegistered(false);
-          }
         } else {
           updateError(signInRes.data.message, setError);
         }

@@ -9,53 +9,63 @@ const LoginContext = createContext();
 const LoginProvider = ({ navigation, children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isVerified, setIsVerified] = useState(true);
-  const [isRegistered, setIsRegistered] = useState(true);
   const [profile, setProfile] = useState({});
   const [loginPending, setLoginPending] = useState(false);
+  const [registered, setRegistered] = useState(null);
 
   const fetchUser = async () => {
-    console.log(isLoggedIn, isVerified, isRegistered, loginPending);
     setLoginPending(true);
     const token = await AsyncStorage.getItem("token");
     if (token) {
-      const res = await client.get("/profile", {
-        headers: {
-          Authorization: token,
-        },
-      });
-
-      if (res.data.success) {
-        setProfile(res.data.user);
-        setIsLoggedIn(true);
-        setIsVerified(res.data.user.isVerified);
-
-        const companyId = res.data.user.company;
-        console.log(companyId);
-        if (companyId) {
-          const companyRes = await client.get(`/companies/${companyId}`, {
-            headers: {
-              Authorization: token,
-            },
-          });
-          console.log(companyRes.data);
-          if (companyRes.data.success) {
-            setIsRegistered(true);
+      await client
+        .get("/profile", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then(async (res) => {
+          if (res.data.success) {
+            setProfile(res.data.user);
+            setIsLoggedIn(true);
+            setIsVerified(res.data.user.isVerified);
           } else {
-            setIsRegistered(false);
+            await AsyncStorage.removeItem("token");
+            setProfile({});
+            setIsLoggedIn(false);
+            setIsVerified(null);
+            setRegistered(null);
           }
-        } else {
-          setIsRegistered(false);
-        }
-      } else {
-        await AsyncStorage.removeItem("token");
-        setProfile({});
-        setIsLoggedIn(false);
-        setIsVerified(true);
-        setIsRegistered(true);
-      }
+        })
+        .catch((e) => {
+          console.log("Error:", e);
+        });
     }
     setLoginPending(false);
   };
+
+  const isRegistered = async () => {
+    setLoginPending(true);
+    const token = await AsyncStorage.getItem("token");
+    await client
+      .get("/is-registered", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        if (res.data.success) {
+          setRegistered(res.data.registered);
+        }
+      })
+      .catch((e) => {
+        console.log("Error:", e.response.data);
+      });
+    setLoginPending(false);
+  };
+
+  useEffect(() => {
+    isRegistered();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     fetchUser();
@@ -67,8 +77,9 @@ const LoginProvider = ({ navigation, children }) => {
 
     if (isLoggedOut) {
       setIsLoggedIn(false);
-      setIsVerified(true);
-      setIsRegistered(true);
+      setIsVerified(null);
+      setRegistered(null);
+      setProfile({});
     }
     setLoginPending(false);
   };
@@ -84,8 +95,8 @@ const LoginProvider = ({ navigation, children }) => {
         setProfile,
         loginPending,
         setLoginPending,
-        isRegistered,
-        setIsRegistered,
+        registered,
+        fetchUser,
         logOut,
       }}
     >
