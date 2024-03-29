@@ -20,7 +20,8 @@ import { format } from "date-fns";
 import RegisteredActivityListing from "./RegisteredActivityListing";
 
 const Activities = ({ navigation }) => {
-  const { loginPending, setLoginPending, profile, setProfile } = useLogin();
+  const { loginPending, setLoginPending, profile, fetchUser } =
+    useLogin();
   const [activities, setActivities] = useState([]);
   const [registeredActivities, setRegisteredActivities] = useState({});
 
@@ -36,13 +37,6 @@ const Activities = ({ navigation }) => {
       })
       .then((response) => {
         if (response.data.success) {
-          setProfile({
-            ...profile,
-            activities: response.data.activities.map(
-              (activity) => activity._id
-            ),
-          });
-
           response.data.activities.forEach((activity) => {
             registeredActivityMap[activity._id] = activity;
           });
@@ -77,11 +71,13 @@ const Activities = ({ navigation }) => {
   };
 
   useEffect(() => {
+    fetchUser();
     getActivities();
   }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
+      fetchUser();
       getActivities();
     });
 
