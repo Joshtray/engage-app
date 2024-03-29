@@ -26,7 +26,7 @@ import unregisterAlert from "../alerts/unregisterAlert";
 import * as Calendar from "expo-calendar";
 
 const Activity = ({ route, navigation }) => {
-  const { loginPending, setLoginPending, profile, setProfile } = useLogin();
+  const { loginPending, setLoginPending, profile } = useLogin();
   const { activity, owner } = route.params;
   const [joined, setJoined] = useState(false);
 
@@ -47,10 +47,6 @@ const Activity = ({ route, navigation }) => {
       )
       .then((res) => {
         if (res.data.success) {
-          setProfile({
-            ...profile,
-            activities: [...profile.activities, activity._id],
-          });
           navigation.goBack();
         } else {
           console.log(res.data.message);
@@ -78,12 +74,6 @@ const Activity = ({ route, navigation }) => {
       )
       .then((res) => {
         if (res.data.success) {
-          setProfile({
-            ...profile,
-            activities: profile.activities.filter(
-              (act) => act !== activity._id
-            ),
-          });
           navigation.goBack();
         } else {
           console.log(res.data.message);
@@ -92,6 +82,7 @@ const Activity = ({ route, navigation }) => {
       .catch((error) => {
         console.log(error.response.data.message);
       });
+    await Notifications.cancelScheduledNotificationAsync(activity._id);
     setLoginPending(false);
   };
 
@@ -145,7 +136,7 @@ const Activity = ({ route, navigation }) => {
   return (
     <View
       style={{
-        height: Dimensions.get("window").height,
+        height: "100%",
         backgroundColor: "#fff",
         display: "flex",
         flexDirection: "column",
