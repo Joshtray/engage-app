@@ -12,8 +12,17 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import client from "../api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLogin } from "../context/LoginProvider";
+import * as Notifications from "expo-notifications";
 
-const RegisteredActivityListing = ({ activity, id, navigation }) => {
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+const RegisteredActivityListing = ({ activity, navigation }) => {
   const [owner, setOwner] = useState({});
   const { profile } = useLogin();
 
@@ -28,8 +37,50 @@ const RegisteredActivityListing = ({ activity, id, navigation }) => {
       setOwner(res.data.user);
     }
   };
+
+  const scheduleNotification = async () => {
+    // await Notifications.getAllScheduledNotificationsAsync().then((res) => {
+    //   console.log("Scheduled notifications: ", res);
+    // });
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      console.log("Failed to get push token for push notification!");
+      return;
+    }
+
+    try {
+      await Notifications.scheduleNotificationAsync({
+        identifier: activity._id,
+        content: {
+          title: `Upcoming activity: \"${activity.name}\"!`,
+          body: "You have a company activity coming up soon! Manage it in the app.",
+        },
+        // Set trigger date to 24 hours before the activity date
+        trigger: new Date(new Date(activity.date) - 86400000),
+      });
+    } catch (error) {
+      console.log(`Error, ${error}`);
+    }
+  };
+
   useEffect(() => {
     getOwner();
+    scheduleNotification();
   }, []);
   return (
     <TouchableOpacity
@@ -40,7 +91,7 @@ const RegisteredActivityListing = ({ activity, id, navigation }) => {
           navigation.navigate("Activity", { activity, owner });
         }
       }}
-      key={id}
+      key={activity._id}
       style={{
         width: 150,
         height: 150,
@@ -111,7 +162,7 @@ const RegisteredActivityListing = ({ activity, id, navigation }) => {
               textAlign: "center",
             }}
           >
-            {format(new Date(activity.date), "HH:MM     dd-MMM-yy")}
+            {format(new Date(activity.date), "HH:mm     dd-MMM-yy")}
           </Text>
         </View>
         <Text
