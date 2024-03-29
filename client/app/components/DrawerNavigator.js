@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import {
   Button,
   Image,
@@ -11,30 +10,18 @@ import {
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
-  DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { useLogin } from "../context/LoginProvider";
-import { useState } from "react";
-import AppLoader from "./AppLoader";
-import Activities from "./Activities";
 import TabNavigator from "./TabNavigator";
 import Entypo from "react-native-vector-icons/Entypo";
 import MyActivities from "./MyActivities";
-import MyActivity from "./MyActivity";
-import EditActivity from "./EditActivity";
+import PastActivities from "./PastActivities";
 
 const Drawer = createDrawerNavigator();
 
 const CustomDrawer = (props) => {
-  const {
-    setIsLoggedIn,
-    setIsVerified,
-    profile,
-    loginPending,
-    setLoginPending,
-    logOut,
-  } = useLogin();
+  const { profile, logOut } = useLogin();
   const updateImage = () => {
     props.navigation.navigate("ImageUpload");
   };
