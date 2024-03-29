@@ -24,7 +24,7 @@ exports.uploadActivityImage = async (req, res) => {
 
     const updatedActivity = await Activity.findByIdAndUpdate(
       activity._id,
-      { image: result.url },
+      { image: result.secure_url },
       { new: true }
     );
 

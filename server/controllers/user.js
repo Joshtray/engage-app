@@ -110,7 +110,7 @@ exports.uploadProfile = async (req, res) => {
       overwrite: true,
     });
 
-    await User.findByIdAndUpdate(user._id, { avatar: result.url });
+    await User.findByIdAndUpdate(user._id, { avatar: result.secure_url });
 
     res
       .status(201)
