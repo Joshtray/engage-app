@@ -15,7 +15,11 @@ app.use(express.urlencoded({ extended: true })); //Parse URL-encoded bodies
 
 app.use((req, res, next) => {
   const date = new Date();
-  console.log(`${date.toISOString()}: ${req.method} ${req.url} responded with ${res.statusCode}`);
+  console.log(
+    `${date.toISOString()}: ${req.method} ${req.url} responded with ${
+      res.statusCode
+    }`
+  );
   next();
 });
 app.use(userRouter);
