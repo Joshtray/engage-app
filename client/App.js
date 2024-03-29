@@ -18,6 +18,7 @@ import EditActivity from "./app/components/EditActivity";
 import ScheduleMatch from "./app/components/ScheduleMatch";
 import SelectInterests from "./app/components/SelectInterests";
 import JobDetails from "./app/components/JobDetails";
+import { StatusBar } from "expo-status-bar";
 
 const Stack = createStackNavigator();
 
@@ -99,6 +100,11 @@ export default function App() {
   return (
     <LoginProvider>
       <NavigationContainer>
+        <StatusBar
+          animated={true}
+          backgroundColor="transparent"
+          translucent={true}
+        />
         <StackNavigator />
       </NavigationContainer>
     </LoginProvider>
