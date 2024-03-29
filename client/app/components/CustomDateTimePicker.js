@@ -4,9 +4,23 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 
-const CustomDateTimePicker = ({ mode, onChange, value }) => {
+const CustomDateTimePicker = ({ mode, onChange, value, minimumDate }) => {
   const [show, setShow] = useState(false);
 
+  if (Platform.OS === "ios") {
+    return (
+      <DateTimePicker
+        value={value}
+        mode={mode}
+        onChange={(event) => {
+          setShow(false);
+          onChange(event);
+        }}
+        minimumDate={minimumDate}
+      />
+    );
+  }
+  
   return (
     <SafeAreaView>
       <TouchableOpacity
@@ -37,6 +51,7 @@ const CustomDateTimePicker = ({ mode, onChange, value }) => {
             setShow(false);
             onChange(event);
           }}
+          minimumDate={minimumDate}
         />
       )}
     </SafeAreaView>

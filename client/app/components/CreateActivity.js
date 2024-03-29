@@ -301,40 +301,21 @@ const CreateActivity = () => {
               marginBottom: 100,
             }}
           >
-            {Platform.OS === "ios" ? (
-              <DateTimePicker
-                mode="date"
-                value={date}
-                onChange={(event) => {
-                  setDate(new Date(event.nativeEvent.timestamp));
-                }}
-              />
-            ) : (
-              <CustomDateTimePicker
-                mode="date"
-                value={date}
-                onChange={(event) => {
-                  setDate(new Date(event.nativeEvent.timestamp));
-                }}
-              />
-            )}
-            {Platform.OS === "ios" ? (
-              <DateTimePicker
-                mode="time"
-                value={time}
-                onChange={(event) => {
-                  setTime(new Date(event.nativeEvent.timestamp));
-                }}
-              />
-            ) : (
-              <CustomDateTimePicker
-                mode="time"
-                value={time}
-                onChange={(event) => {
-                  setTime(new Date(event.nativeEvent.timestamp));
-                }}
-              />
-            )}
+            <CustomDateTimePicker
+              mode="date"
+              value={date}
+              onChange={(event) => {
+                setDate(new Date(event.nativeEvent.timestamp));
+              }}
+              minimumDate={new Date()}
+            />
+            <CustomDateTimePicker
+              mode="time"
+              value={time}
+              onChange={(event) => {
+                setTime(new Date(event.nativeEvent.timestamp));
+              }}
+            />
           </View>
         </View>
       </ScrollView>
