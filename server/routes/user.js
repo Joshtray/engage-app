@@ -16,12 +16,13 @@ const {
   validateUserSignIn,
 } = require("../middlewares/validation/user");
 const { isAuth } = require("../middlewares/auth");
-
+const parser = require("cron-parser");
 const User = require("../models/user");
 const Company = require("../models/company");
 const Tag = require("../models/tag");
 const multer = require("multer");
 const { spawn } = require("child_process");
+const Domain = require("../models/domain");
 
 const storage = multer.diskStorage({});
 
@@ -101,7 +102,48 @@ router.get("/profile", isAuth, async (req, res) => {
   res.status(200).json({ success: true, user });
 });
 
-module.exports = router;
+router.get("/is-registered", isAuth, async (req, res) => {
+  const { user } = req;
+  if (!user)
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized", registered: false });
+
+  const companyId = user.company;
+  if (companyId) {
+    const company = await Company.findById(companyId);
+    if (company) {
+      if (company.employees.includes(user._id)) {
+        return res.status(200).json({
+          success: true,
+          message: "User registered",
+          registered: true,
+        });
+      }
+    }
+  }
+  const domain = await Domain.findOne({
+    name: user.email.split("@")[1],
+  }).populate("company");
+
+  const company = domain ? domain.company : null;
+  if (company) {
+    if (!company.employees.includes(user._id)) {
+      company.employees.push(user);
+      await Company.findByIdAndUpdate(company._id, company);
+    }
+    await User.findByIdAndUpdate(user._id, { company: company._id });
+    return res
+      .status(200)
+      .json({ success: true, message: "User registered", registered: true });
+  } else {
+    return res.status(200).json({
+      success: true,
+      message: "User not registered",
+      registered: false,
+    });
+  }
+});
 
 router.post("/add-connection", isAuth, async (req, res) => {
   try {
