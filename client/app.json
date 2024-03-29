@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-native-form",
-    "slug": "react-native-form",
+    "name": "engage-app",
+    "slug": "engage-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,16 +15,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.joshtray15.engageapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.joshtray15.engageapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "82af75b8-223b-409e-a3d7-d074b26297a0"
+      }
+    },
+    "owner": "joshtray15"
   }
 }
