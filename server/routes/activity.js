@@ -158,7 +158,11 @@ router.get("/activities", isAuth, async (req, res) => {
         .status(404)
         .json({ success: false, message: "Company not found" });
     }
-    res.status(200).json({ success: true, activities: company.activities });
+    // Sort activities by date and pick only the ones that are not past
+    const activities = company.activities
+      .filter((activity) => activity.date > new Date())
+      .sort((a, b) => a.date - b.date);
+    res.status(200).json({ success: true, activities });
   } catch (error) {
     res.status(500).send(error);
   }
@@ -168,7 +172,11 @@ router.get("/activities", isAuth, async (req, res) => {
 router.get("/registered-activities", isAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate("activities");
-    res.status(200).json({ success: true, activities: user.activities });
+    // Sort activities by date and pick only the ones that are not past
+    const activities = user.activities
+      .filter((activity) => activity.date > new Date())
+      .sort((a, b) => a.date - b.date);
+    res.status(200).json({ success: true, activities });
   } catch (error) {
     res.status(500).send(error);
   }
@@ -178,9 +186,10 @@ router.get("/registered-activities", isAuth, async (req, res) => {
 router.get("/my-activities", isAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate("activities");
-    const activities = user.activities.filter(
-      (activity) => activity.owner.toString() === user._id.toString()
-    );
+    // Sort activities by date
+    const activities = user.activities
+      .filter((activity) => activity.owner.toString() === user._id.toString() && activity.date > new Date())
+      .sort((a, b) => a.date - b.date);
     res.status(200).json({ success: true, activities });
   } catch (error) {
     res.status
@@ -202,57 +211,59 @@ router.post(
       const activity = await Activity.findById(req.body.id);
       if (!activity) {
         return res
-          .status(404)
-          .json({ success: false, message: "Activity not found" });
+        .status(404)
+        .json({ success: false, message: "Activity not found" });
       }
       if (activity.owner.toString() !== req.user._id.toString()) {
         return res
-          .status(401)
-          .json({ success: false, message: "Unauthorized" });
+        .status(401)
+        .json({ success: false, message: "Unauthorized" });
       }
       const updatedActivity = await Activity.findByIdAndUpdate(
         req.body.id,
         updateInfo,
         { new: true }
-      );
-      if (!req.file) {
-        res.status(200).json({ success: true, activity: updatedActivity });
-      } else {
-        req.activity = updatedActivity;
-        next();
+        );
+        if (!req.file) {
+          res.status(200).json({ success: true, activity: updatedActivity });
+        } else {
+          req.activity = updatedActivity;
+          next();
+        }
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, error });
       }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ success: false, error });
-    }
-  },
-  uploadActivityImage
-);
-
-// Delete an activity
-router.post("/delete-activity", isAuth, async (req, res) => {
-  try {
-    const activity = await Activity.findById(req.body.id);
-    if (!activity) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Activity not found" });
-    }
-    if (activity.owner.toString() !== req.user._id.toString()) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
-    // Remove the activity from the company, owner and participants
-    await Company.findByIdAndUpdate(activity.company, {
-      $pull: { activities: activity._id },
-    });
-    await User.updateMany(
-      { _id: { $in: activity.participants } },
-      { $pull: { activities: activity._id } }
+    },
+    uploadActivityImage
     );
-
-    await Activity.findByIdAndDelete(req.body.id);
-    res.status(200).json({ success: true, message: "Activity deleted" });
+    
+    // Delete an activity
+    router.post("/delete-activity", isAuth, async (req, res) => {
+      try {
+        const activity = await Activity.findById(req.body.id);
+        if (!activity) {
+          return res
+          .status(404)
+          .json({ success: false, message: "Activity not found" });
+        }
+        if (activity.owner.toString() !== req.user._id.toString()) {
+          return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+        // Remove the activity from the company, owner and participants
+        await Company.findByIdAndUpdate(activity.company, {
+          $pull: { activities: activity._id },
+        });
+        await User.updateMany(
+          { _id: { $in: activity.participants } },
+          { $pull: { activities: activity._id } }
+          );
+          
+          await Activity.findByIdAndDelete(req.body.id);
+          res.status(200).json({ success: true, message: "Activity deleted" });
   } catch (error) {
     res.status(500).json({ success: false, error });
   }
 });
+
+module.exports = router;
