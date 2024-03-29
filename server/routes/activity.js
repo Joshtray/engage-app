@@ -198,7 +198,21 @@ router.get("/my-activities", isAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+// Get all a user's activities that have completed
+router.get("/past-activities", isAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate("activities");
+    // Sort activities by date
+    const activities = user.activities
+      .filter((activity) => activity.date < new Date())
+      .sort((a, b) => b.date - a.date);
+    res.status(200).json({ success: true, activities });
+  } catch (error) {
+    res.status
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
 
 // Update an activity
 router.post(
