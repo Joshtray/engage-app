@@ -54,6 +54,25 @@ const userSchema = new mongoose.Schema({
       ref: "ChatRoom",
     },
   ],
+  currentMatch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  matchSchedule: {
+    type: String,
+  },
+  matchExpiry: {
+    type: Date,
+  },
+  jobTitle: {
+    type: String,
+  },
+  team: {
+    type: String,
+  },
+  org: {
+    type: String,
+  },
 });
 
 userSchema.pre("save", function (next) {
