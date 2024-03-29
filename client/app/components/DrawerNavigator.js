@@ -61,7 +61,13 @@ const CustomDrawer = (props) => {
               borderRadius: 125 / 2,
             }}
           >
-            <View style={{ width: 60, height: 60, borderRadius: 30 }}>
+            <View
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 30,
+              }}
+            >
               {profile.avatar && (
                 <Image
                   source={{
@@ -171,6 +177,13 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name="My Activities"
         component={MyActivities}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Drawer.Screen
+        name="Activity History"
+        component={PastActivities}
         options={{
           headerShown: false,
         }}
