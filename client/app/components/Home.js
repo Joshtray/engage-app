@@ -17,10 +17,61 @@ import { useLogin } from "../context/LoginProvider";
 import { Ionicons } from "react-native-vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 const Home = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [match, setMatch] = useState({});
+  const { profile, fetchUser } = useLogin();
+
+  const scheduleNotification = async () => {
+    // await Notifications.getAllScheduledNotificationsAsync().then((res) => {
+    //   console.log("Scheduled notifications: ", res);
+    // });
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      console.log("Failed to get push token for push notification!");
+      return;
+    }
+
+    try {
+      console.log("Scheduling notification for: ", profile.matchExpiry);
+      await Notifications.scheduleNotificationAsync({
+        identifier: `match-${profile._id}`,
+        content: {
+          title: "Time for a new match!",
+          body: "It's time to get matched with someone new! See your next match on the app.",
+        },
+        // Set trigger date to the match expiry date
+        trigger: new Date(profile.matchExpiry),
+      });
+    } catch (error) {
+      console.log(`Error, ${error}`);
+    }
+  };
 
   const getMatch = async () => {
     setLoading(true);
