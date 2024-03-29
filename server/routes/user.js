@@ -212,54 +212,92 @@ router.post("/add-connection", isAuth, async (req, res) => {
   }
 });
 
-router.get("/generate-match", isAuth, async (req, res) => {
+
+router.post("/update-match-schedule", isAuth, async (req, res) => {
+  try {
+    const { user } = req;
+    const { schedule } = req.body;
+    if (!user)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const currUser = await User.findById(user._id);
+    currUser.matchSchedule = schedule;
+
+    const interval = parser.parseExpression(schedule);
+    console.log(interval.next());
+    currUser.matchExpiry = interval.next();
+    await User.findByIdAndUpdate(currUser._id, currUser);
+    return res.status(201).json({ success: true, user: currUser });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+router.get("/get-match", isAuth, async (req, res) => {
   try {
     const { user } = req;
     var matchId;
     if (!user)
       return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const companyUsers = await User.find({ company: user.company });
-    const tagIds = (await Tag.find({})).map((tag) => tag._id);
-    const python = spawn("python", [
-      "./utils/matcher.py",
-      user._id,
-      JSON.stringify(companyUsers),
-      JSON.stringify(tagIds),
-    ]);
-    // collect data from script
-    python.stdout.on("data", (data) => {
-      // const
-      //   match
-      //   = await User.findById(data.toString());
-      // return res.status(200).json({ success: true, match });
-      console.log("Running matching algorithm ...");
-      matchId = data.toString().trim();
-    });
-    python.stderr.on("data", (data) => {
-      console.error(`stderr: ${data}`);
-    });
-    // in close event we are sure that stream from child process is closed
-    python.on("close", async (code) => {
-      console.log(`child process close all stdio with code ${code}`);
-      // send data to browser
-      if (matchId) {
-        const match = await User.findById(matchId);
+    if (user.currentMatch && user.matchExpiry > new Date()) {
+      const match = await User.findById(user.currentMatch);
+      const { password, emailToken, ...sharedUser } = match._doc;
+      return res.status(200).json({ success: true, match: sharedUser });
+    }
 
-        if (match) {
-          const { password, emailToken, ...sharedUser } = match._doc;
-          return res.status(200).json({ success: true, match: sharedUser });
+    if (user.matchSchedule) {
+      const companyUsers = await User.find({ company: user.company });
+      const tagIds = (await Tag.find({})).map((tag) => tag._id);
+      const python = spawn("python", [
+        "./utils/matcher.py",
+        user._id,
+        JSON.stringify(companyUsers),
+        JSON.stringify(tagIds),
+      ]);
+      // collect data from script
+      python.stdout.on("data", (data) => {
+        // const
+        //   match
+        //   = await User.findById(data.toString());
+        // return res.status(200).json({ success: true, match });
+        console.log("Running matching algorithm ...");
+        matchId = data.toString().trim();
+      });
+      python.stderr.on("data", (data) => {
+        console.error(`stderr: ${data}`);
+      });
+      // in close event we are sure that stream from child process is closed
+      python.on("close", async (code) => {
+        console.log(`child process close all stdio with code ${code}`);
+        // send data to browser
+        if (matchId) {
+          const match = await User.findById(matchId);
+
+          if (match) {
+            user.currentMatch = matchId;
+            const interval = parser.parseExpression(user.matchSchedule);
+            user.matchExpiry = interval.next();
+
+            await User.findByIdAndUpdate(user._id, user);
+            const { password, emailToken, ...sharedUser } = match._doc;
+            return res.status(200).json({ success: true, match: sharedUser });
+          }
+
+          return res
+            .status(200)
+            .json({ success: false, message: "No match found" });
+        } else {
+          return res
+            .status(200)
+            .json({ success: false, message: "No match found" });
         }
-
-        return res
-          .status(200)
-          .json({ success: false, message: "No match found" });
-      } else {
-        return res
-          .status(200)
-          .json({ success: false, message: "No match found" });
-      }
-    });
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, message: "No match found" });
+    }
 
     // const currUser = await User.findById(user._id);
     // const users = await User.find({});
@@ -278,3 +316,5 @@ router.get("/generate-match", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
+
+module.exports = router;
