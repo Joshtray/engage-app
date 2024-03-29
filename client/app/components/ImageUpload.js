@@ -52,25 +52,31 @@ const ImageUpload = (props) => {
       const token = await AsyncStorage.getItem("token");
 
       if (token) {
-        const response = await client.post("/upload-profile", formData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: token,
-          },
-          onUploadProgress: ({ loaded, total }) => {
-            console.log(loaded, total);
-            setProgress(loaded / total);
-          },
-        });
-
-        if (response.data.success) {
-          setProfile({ ...profile, avatar: image });
-          props.navigation.dispatch(StackActions.replace("DrawerNavigator"));
-        }
+        await client
+          .post("/upload-profile", formData, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "multipart/form-data",
+              Authorization: token,
+            },
+            onUploadProgress: ({ loaded, total }) => {
+              console.log(loaded, total);
+              setProgress(loaded / total);
+            },
+          })
+          .then((response) => {
+            if (response.data.success) {
+              props.navigation.dispatch(
+                StackActions.replace("DrawerNavigator")
+              );
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
       } else {
         setIsLoggedIn(false);
-        setIsVerified(false);
+        setIsVerified(null);
       }
     } catch (err) {
       updateError(err.message, setError);
