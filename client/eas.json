@@ -18,18 +18,18 @@
         "EXPO_PUBLIC_API_URL": "https://engage-app-server-b43290c759df.herokuapp.com"
       }
     },
-    "preview2": {
-      "distribution": "internal"
-    },
-    "preview3": {
+    "production": {
       "android": {
-        "gradleCommand": ":app:assembleRelease"
+        "buildType": "apk",
+        "image": "latest",
+        "env": {
+          "EXPO_PUBLIC_API_URL": "https://engage-app-server-b43290c759df.herokuapp.com"
+        }
+      },
+      "ios": {
+        "image": "latest"
       }
-    },
-    "preview4": {
-      "developmentClient": true
-    },
-    "production": {}
+    }
   },
   "submit": {
     "production": {}
