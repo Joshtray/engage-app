@@ -1,6 +1,6 @@
 import os
-os.system('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
-os.system('python get-pip.py')
+# os.system('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
+# os.system('python get-pip.py')
 
 try:
     import pandas as pd
