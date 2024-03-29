@@ -26,7 +26,6 @@ const VerifyEmail = ({ navigation }) => {
   const {
     setIsLoggedIn,
     setIsVerified,
-    setIsRegistered,
     loginPending,
     setLoginPending,
     logOut,
@@ -54,24 +53,7 @@ const VerifyEmail = ({ navigation }) => {
       });
       if (res.data.success) {
         setIsVerified(res.data.user.isVerified);
-        if (res.data.user.isVerified) {
-          const companyId = res.data.user.company;
-          if (companyId) {
-            const companyRes = await client.get(`/companies/${companyId}`, {
-              headers: {
-                Authorization: res.data.token,
-              },
-            });
-
-            if (companyRes.data.success) {
-              setIsRegistered(true);
-            } else {
-              setIsRegistered(false);
-            }
-          } else {
-            setIsRegistered(false);
-          }
-        } else {
+        if (!res.data.user.isVerified)  {
           setAlert("Email has not yet been verified");
           setAlertType("alert");
         }
