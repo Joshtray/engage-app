@@ -1,17 +1,18 @@
 import os
 
-# os.system('apt-get install python3-pip')
+os.system('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
+os.system('sudo python get-pip.py')
 try:
     import pandas as pd
 except ImportError:
-    os.system('python -m pip install pandas')
+    os.system('pip install pandas')
 finally:
     import pandas as pd
 
 try:
     from sklearn.metrics.pairwise import cosine_similarity
 except ImportError:
-    os.system('python -m pip install scikit-learn')
+    os.system('pip install scikit-learn')
 finally:
     from sklearn.metrics.pairwise import cosine_similarity
 
