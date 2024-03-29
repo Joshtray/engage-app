@@ -27,7 +27,7 @@ const Home = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("token");
       await client
-        .get("/generate-match", {
+        .get("/get-match", {
           headers: {
             Authorization: token,
           },
@@ -40,9 +40,10 @@ const Home = ({ navigation }) => {
         .catch((err) => {
           console.log(err);
         });
-      setLoading(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      fetchUser();
       setLoading(false);
     }
   };
@@ -50,10 +51,16 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     getMatch();
   }, []);
+  useEffect(() => {
+    if (profile.matchExpiry) {
+      scheduleNotification();
+    }
+  }, [profile.matchExpiry]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       getMatch();
+      fetchUser();
     });
 
     return unsubscribe;
@@ -120,15 +127,35 @@ const Home = ({ navigation }) => {
               minHeight: 150,
             }}
           >
-            <Text
+            <View
               style={{
-                fontSize: 20,
-                lineHeight: 50,
-                fontFamily: "PlusJakartaSansSemiBold",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
               }}
             >
-              Your next match:
-            </Text>
+              <Text
+                style={{
+                  fontSize: 20,
+                  lineHeight: 50,
+                  fontFamily: "PlusJakartaSansSemiBold",
+                }}
+              >
+                Your next match:
+              </Text>
+              {!loading && profile.matchExpiry && (
+                <Text
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 50,
+                    color: "#0B2C7F",
+                    fontFamily: "PlusJakartaSansSemiBold",
+                  }}
+                >
+                  Till: {format(new Date(profile.matchExpiry), "dd/MM/yyyy")}
+                </Text>
+              )}
+            </View>
 
             <View
               // key={id}
@@ -154,6 +181,33 @@ const Home = ({ navigation }) => {
                 >
                   Loading...
                 </Text>
+              ) : !profile.matchSchedule ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("JobDetails");
+                  }}
+                >
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: "PlusJakartaSansMedium",
+                        color: "#0B2C7F",
+                      }}
+                    >
+                      You do not have matching set up. Start now...
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               ) : (
                 <View
                   style={{
