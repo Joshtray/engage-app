@@ -92,7 +92,6 @@ const Activities = ({ navigation }) => {
             width: "100%",
             flex: 1,
             paddingHorizontal: 20,
-            // borderWidth: 1
           }}
         >
           <View
@@ -217,7 +216,7 @@ const Activities = ({ navigation }) => {
           </View>
           <View
             style={{
-              marginBottom: 20,
+              marginBottom: 80,
               minHeight: 150,
             }}
           >

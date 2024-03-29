@@ -134,7 +134,7 @@ const Communities = ({ navigation }) => {
             </Text>
             {loginPending || (
               <ScrollView
-                style={{ width: "100%" }}
+                style={{ width: "100%", marginBottom: 80 }}
                 showsVerticalScrollIndicator={false}
               >
                 {communities.map((community) => (
