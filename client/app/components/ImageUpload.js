@@ -112,13 +112,13 @@ const ImageUpload = (props) => {
             Skip
           </Text>
         </View>
-          {image && (
-            <FormSubmitButton
-              onPress={uploadImage}
-              disabled={progress > 0}
-              title="Upload"
-            />
-          )}
+        {image && (
+          <FormSubmitButton
+            onPress={uploadImage}
+            disabled={progress > 0}
+            title="Upload"
+          />
+        )}
       </View>
       {loading && <AppLoader />}
     </>

@@ -179,23 +179,12 @@ const VerifyEmail = ({ navigation }) => {
             Resend verification email
           </Text>
         </View>
-
-        <Text
-          style={{
-            color: "#0B2C7F",
-            position: "absolute",
-            bottom: 20,
-            left: 0,
-            right: 0,
-            textAlign: "center",
-            fontFamily: "PlusJakartaSansMedium",
-            fontSize: 14,
-          }}
-          onPress={logOut}
-        >
-          Sign in with a different account
-        </Text>
-        <FormSubmitButton title="Refresh" onPress={refreshPage} />
+        <FormSubmitButton
+          title="Refresh"
+          onPress={refreshPage}
+          secondaryOnPress={logOut}
+          secondaryTitle={"Sign in with a different account"}
+        />
       </View>
       {loginPending && <AppLoader />}
     </>

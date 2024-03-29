@@ -260,51 +260,15 @@ const MyActivity = ({ route, navigation }) => {
           {activity.description}
         </Text>
       </ScrollView>
-      <View
-        style={{
-          height: 50,
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          marginBottom: 60,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
+      <FormSubmitButton
+        twoButton={true}
+        title="Edit"
+        onPress={() => {
+          navigation.navigate("EditActivity", { activity });
         }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("EditActivity", { activity });
-          }}
-          style={styles.editButton}
-        >
-          <Text
-            style={{
-              fontSize: 18,
-              color: "#0B2C7F",
-              fontFamily: "PlusJakartaSans",
-            }}
-          >
-            Edit
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => deleteActivityAlert(activity, deleteActivity)}
-          style={styles.deleteButton}
-        >
-          <Text
-            style={{
-              fontSize: 18,
-              color: "white",
-              fontFamily: "PlusJakartaSans",
-            }}
-          >
-            Cancel Activity
-          </Text>
-        </TouchableOpacity>
-      </View>
+        title2="Cancel Activity"
+        onPress2={() => deleteActivityAlert(activity, deleteActivity)}
+      />
       <LinearGradient
         colors={["#000000", "rgba(0, 0, 0, 0)"]}
         style={{
