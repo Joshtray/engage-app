@@ -1,7 +1,5 @@
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import LottieView from "lottie-react-native";
-import * as Progress from "react-native-progress";
 import { WebView } from "react-native-webview";
 
 const AppLoader = () => {
