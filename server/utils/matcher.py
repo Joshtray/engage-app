@@ -1,8 +1,19 @@
-import pandas as pd
-import math
-import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import TfidfVectorizer
+import os
+
+try:
+    import pandas as pd
+except ImportError:
+    os.system('pip install pandas')
+finally:
+    import pandas as pd
+
+try:
+    from sklearn.metrics.pairwise import cosine_similarity
+except ImportError:
+    os.system('pip install scikit-learn')
+finally:
+    from sklearn.metrics.pairwise import cosine_similarity
+
 import sys
 import json
 
