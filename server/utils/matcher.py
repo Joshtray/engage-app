@@ -3,14 +3,14 @@ import os
 try:
     import pandas as pd
 except ImportError:
-    os.system('pip install pandas')
+    os.system('pip3 install pandas')
 finally:
     import pandas as pd
 
 try:
     from sklearn.metrics.pairwise import cosine_similarity
 except ImportError:
-    os.system('pip install scikit-learn')
+    os.system('pip3 install scikit-learn')
 finally:
     from sklearn.metrics.pairwise import cosine_similarity
 
