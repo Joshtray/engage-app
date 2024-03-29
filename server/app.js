@@ -7,6 +7,7 @@ const communityRouter = require("./routes/community");
 const companyRouter = require("./routes/company");
 
 const app = express();
+const port = process.env.PORT || 8000;
 
 app.use(express.json()); // Used to parse JSON bodies
 app.use(express.urlencoded({ extended: true })); //Parse URL-encoded bodies
@@ -25,6 +26,6 @@ app.get("/", (req, res) => {
   res.json({ success: true, message: "Welcome to the API" });
 });
 
-app.listen(8000, () => {
-  console.log("Server is running on port 8000");
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
