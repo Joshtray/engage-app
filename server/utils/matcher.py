@@ -1,5 +1,6 @@
 import os
 
+os.system('apt-get install python3-pip')
 try:
     import pandas as pd
 except ImportError:
