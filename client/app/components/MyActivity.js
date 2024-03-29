@@ -46,6 +46,7 @@ const MyActivity = ({ route, navigation }) => {
     } catch (error) {
       console.log(error);
     }
+    await Notifications.cancelScheduledNotificationAsync(activity._id);
     setLoginPending(false);
   };
 
