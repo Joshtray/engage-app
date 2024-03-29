@@ -23,6 +23,7 @@ import { useLogin } from "../context/LoginProvider";
 import client from "../api/client";
 import registerAlert from "../alerts/registerAlert";
 import unregisterAlert from "../alerts/unregisterAlert";
+import * as Calendar from "expo-calendar";
 
 const Activity = ({ route, navigation }) => {
   const { loginPending, setLoginPending, profile, setProfile } = useLogin();
@@ -92,6 +93,41 @@ const Activity = ({ route, navigation }) => {
         console.log(error.response.data.message);
       });
     setLoginPending(false);
+  };
+
+  const addEventToCalendar = async () => {
+    try {
+      const { status } = await Calendar.requestCalendarPermissionsAsync();
+      if (status === "granted") {
+        console.log("Permissions granted. Fetching available calendars...");
+        const calendars = await Calendar.getCalendarsAsync(
+          Calendar.EntityTypes.EVENT
+        );
+        const defaultCalendar =
+          calendars.find((calendar) => calendar.isPrimary) || calendars[0];
+        if (defaultCalendar) {
+          const eventConfig = {
+            title: activity.name,
+            startDate: new Date(activity.date).toISOString(),
+            endDate: new Date(activity.date).toISOString(),
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            allDay: false,
+            location: activity.location,
+          };
+          const eventId = await Calendar.createEventAsync(
+            defaultCalendar.id,
+            eventConfig
+          );
+          console.log("Success! Event added to your calendar");
+        } else {
+          console.warn("No available calendars found.");
+        }
+      } else {
+        console.warn("Calendar permission not granted.");
+      }
+    } catch (error) {
+      console.warn(error);
+    }
   };
 
   const checkIfJoined = () => {
@@ -353,17 +389,13 @@ const Activity = ({ route, navigation }) => {
         </Text>
       </ScrollView>
       <FormSubmitButton
-        title={joined ? "Unregister" : "Join"}
+        twoButton={joined}
+        title={joined ? "Add to Calendar" : "Join"}
         onPress={() =>
-          joined
-            ? unregisterAlert(activity, leaveActivity)
-            : registerAlert(activity, joinActivity)
+          joined ? addEventToCalendar() : registerAlert(activity, joinActivity)
         }
-        style={
-          joined && {
-            backgroundColor: "#EA4335",
-          }
-        }
+        title2="Unregister"
+        onPress2={() => unregisterAlert(activity, leaveActivity)}
       />
       <LinearGradient
         colors={["#000000", "rgba(0, 0, 0, 0)"]}
