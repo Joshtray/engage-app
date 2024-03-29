@@ -35,7 +35,7 @@ const CreateActivity = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { setIsLoggedIn, profile, setProfile } = useLogin();
+  const { setIsLoggedIn, profile } = useLogin();
   const navigation = useNavigation();
 
   const handleSubmit = async () => {
@@ -128,12 +128,8 @@ const CreateActivity = () => {
           },
         })
         .then((res) => {
-          console.log(res.data)
+          console.log(res.data);
           if (res.data.success) {
-            setProfile({
-              ...profile,
-              activities: [...profile?.activities, res.data.activity._id],
-            });
             navigation.goBack();
           }
         })

@@ -23,7 +23,7 @@ import registerAlert from "../alerts/registerAlert";
 
 const ActivityListing = (props) => {
   const { navigation, getActivities, activity } = props;
-  const { setLoginPending, profile, setProfile } = useLogin();
+  const { setLoginPending, profile } = useLogin();
   const [owner, setOwner] = useState({});
 
   const getOwner = async () => {
@@ -55,7 +55,6 @@ const ActivityListing = (props) => {
       )
       .then((res) => {
         if (res.data.success) {
-          setProfile({ ...profile, activities: [...profile.activities, activity._id] });
           getActivities();
         } else {
           console.log(res.data.message);

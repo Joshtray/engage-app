@@ -24,7 +24,7 @@ import client from "../api/client";
 import deleteActivityAlert from "../alerts/deleteActivityAlert";
 
 const MyActivity = ({ route, navigation }) => {
-  const { loginPending, setLoginPending, profile, setProfile } = useLogin();
+  const { loginPending, setLoginPending, profile } = useLogin();
   const { activity } = route.params;
 
   const deleteActivity = async () => {

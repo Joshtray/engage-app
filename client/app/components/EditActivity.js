@@ -37,7 +37,6 @@ import { updateError } from "../utils/methods";
 import CustomDateTimePicker from "./CustomDateTimePicker";
 
 const EditActivity = ({ route, navigation }) => {
-  const { loginPending, setLoginPending, profile, setProfile } = useLogin();
   const { activity } = route.params;
 
   const [image, setImage] = useState(activity.image);

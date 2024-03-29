@@ -11,7 +11,7 @@ import AppLoader from "./AppLoader";
 import FormSubmitButton from "./FormSubmitButton";
 
 const ImageUpload = (props) => {
-  const { profile, setProfile, setIsLoggedIn, setIsVerified } = useLogin();
+  const { profile, setIsLoggedIn, setIsVerified } = useLogin();
 
   const [image, setImage] = useState(profile.avatar);
   const [loading, setLoading] = useState(false);
