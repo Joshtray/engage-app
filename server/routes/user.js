@@ -212,6 +212,21 @@ router.post("/add-connection", isAuth, async (req, res) => {
   }
 });
 
+router.post("/update-profile", isAuth, async (req, res) => {
+  try {
+    const { user } = req;
+    const { update } = req.body;
+    if (!user)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const currUser = await User.findById(user._id);
+    const updatedUser = { ...currUser._doc, ...update };
+    await User.findByIdAndUpdate(currUser._id, updatedUser);
+    return res.status(201).json({ success: true, user: updatedUser });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
 
 router.post("/update-match-schedule", isAuth, async (req, res) => {
   try {
