@@ -34,6 +34,11 @@
         "projectId": "82af75b8-223b-409e-a3d7-d074b26297a0"
       }
     },
-    "owner": "joshtray15"
+    "owner": "joshtray15",
+    "expo": {
+      "androidStatusBar": {
+        "translucent": true
+      }
+    }
   }
 }
