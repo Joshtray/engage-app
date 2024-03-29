@@ -8,7 +8,7 @@ import { useLogin } from "../context/LoginProvider";
 import MyActivityListing from "./MyActivityListing";
 
 const MyActivities = ({ navigation }) => {
-  const { loginPending, setLoginPending } = useLogin();
+  const { loginPending, setLoginPending, fetchUser } = useLogin();
   const [myActivities, setMyActivities] = useState(null);
 
   const getMyActivities = async () => {
@@ -26,11 +26,13 @@ const MyActivities = ({ navigation }) => {
   };
 
   useEffect(() => {
+    fetchUser();
     getMyActivities();
   }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
+      fetchUser();
       getMyActivities();
     });
 
