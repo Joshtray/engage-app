@@ -5,6 +5,7 @@ const userRouter = require("./routes/user");
 const activityRouter = require("./routes/activity");
 const communityRouter = require("./routes/community");
 const companyRouter = require("./routes/company");
+const tagRouter = require("./routes/tag");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -21,6 +22,7 @@ app.use(userRouter);
 app.use(activityRouter);
 app.use(communityRouter);
 app.use(companyRouter);
+app.use(tagRouter);
 
 app.get("/", (req, res) => {
   res.json({ success: true, message: "Welcome to the API" });
