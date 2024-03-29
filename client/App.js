@@ -15,6 +15,9 @@ import Profile from "./app/components/Profile";
 import Activity from "./app/components/Activity";
 import MyActivity from "./app/components/MyActivity";
 import EditActivity from "./app/components/EditActivity";
+import ScheduleMatch from "./app/components/ScheduleMatch";
+import SelectInterests from "./app/components/SelectInterests";
+import JobDetails from "./app/components/JobDetails";
 
 const Stack = createStackNavigator();
 
@@ -53,6 +56,12 @@ const StackNavigator = ({ navigation }) => {
                 <Stack.Screen name="Activity" component={Activity} />
                 <Stack.Screen name="MyActivity" component={MyActivity} />
                 <Stack.Screen name="EditActivity" component={EditActivity} />
+                <Stack.Screen name="JobDetails" component={JobDetails} />
+                <Stack.Screen
+                  name="SelectInterests"
+                  component={SelectInterests}
+                />
+                <Stack.Screen name="ScheduleMatch" component={ScheduleMatch} />
               </Stack.Navigator>
               {loginPending && <AppLoader />}
             </>
