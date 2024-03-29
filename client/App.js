@@ -22,7 +22,7 @@ import JobDetails from "./app/components/JobDetails";
 const Stack = createStackNavigator();
 
 const StackNavigator = ({ navigation }) => {
-  const { isLoggedIn, loginPending, isVerified, isRegistered } = useLogin();
+  const { isLoggedIn, loginPending, isVerified, registered } = useLogin();
 
   const [loaded] = useFonts({
     PlusJakartaSans: require("./assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular.ttf"),
@@ -40,7 +40,9 @@ const StackNavigator = ({ navigation }) => {
     <>
       {isLoggedIn ? (
         isVerified ? (
-          isRegistered ? (
+          registered === null ? (
+            <AppLoader />
+          ) : registered ? (
             <>
               <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen
