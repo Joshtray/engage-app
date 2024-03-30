@@ -19,6 +19,7 @@ import ScheduleMatch from "./app/components/ScheduleMatch";
 import SelectInterests from "./app/components/SelectInterests";
 import JobDetails from "./app/components/JobDetails";
 import { StatusBar } from "expo-status-bar";
+import ChatRoom from "./app/components/ChatRoom";
 
 const Stack = createStackNavigator();
 
@@ -65,6 +66,7 @@ const StackNavigator = ({ navigation }) => {
                   component={SelectInterests}
                 />
                 <Stack.Screen name="ScheduleMatch" component={ScheduleMatch} />
+                <Stack.Screen name="ChatRoom" component={ChatRoom} />
               </Stack.Navigator>
               {loginPending && <AppLoader />}
             </>

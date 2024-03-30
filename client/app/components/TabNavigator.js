@@ -17,45 +17,7 @@ import Activities from "./Activities";
 import { Ionicons, Octicons, Feather } from "react-native-vector-icons";
 import Home from "./Home";
 import Communities from "./Communities";
-
-// function Home({ navigation }) {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Home Screen</Text>
-//       <Button
-//         title="Open Drawer"
-//         style={{ fontFamily: "PlusJakartaSans" }}
-//         onPress={() => navigation.openDrawer()}
-//       />
-//     </View>
-//   );
-// }
-
-function Chat({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Text>Chat Screen</Text>
-      <Button
-        title="Open Drawer"
-        style={{ fontFamily: "PlusJakartaSans" }}
-        onPress={() => navigation.openDrawer()}
-      />
-    </View>
-  );
-}
-
-// function Community({ navigation }) {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Community Screen</Text>
-//       <Button
-//         title="Open Drawer"
-//         style={{ fontFamily: "PlusJakartaSans" }}
-//         onPress={() => navigation.openDrawer()}
-//       />
-//     </View>
-//   );
-// }
+import Chat from "./Chat";
 
 const Tab = createBottomTabNavigator();
 
@@ -180,10 +142,4 @@ const TabNavigator = () => {
 export default TabNavigator;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
 });
