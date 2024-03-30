@@ -51,6 +51,35 @@ const Profile = ({ route, navigation }) => {
     }
   };
 
+  const findChatroom = async () => {
+    setLoading(true)
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await client
+        .get("/find-chatroom", {
+          params: {
+            user2: user._id
+          },
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((res) => {
+          if (res.data.success) {
+            navigation.navigate("ChatRoom", { chatRoom: res.data.chatroom });
+          }
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    finally {
+      setLoading(false)
+    }
+  };
+
   useEffect(() => {
     getConnectionStatus(profile);
   }, [profile]);
@@ -99,7 +128,10 @@ const Profile = ({ route, navigation }) => {
           break;
         case "CONNECTED":
           setConnectionButton(
-            <View style={styles.connectionButton}>
+            <TouchableOpacity
+              style={styles.connectionButton}
+              onPress={findChatroom}
+            >
               <Text
                 style={{
                   padding: 10,
@@ -112,7 +144,7 @@ const Profile = ({ route, navigation }) => {
               <View style={styles.connectionButtonIcon}>
                 <MaterialIcons name="message" size={24} color="#0B2C7F" />
               </View>
-            </View>
+            </TouchableOpacity>
           );
           break;
         default:

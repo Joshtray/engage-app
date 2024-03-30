@@ -160,7 +160,7 @@ const ChatRoom = ({ route, navigation }) => {
                       textAlign: "center",
                       fontFamily: "PlusJakartaSans",
                       fontSize: 12,
-                      color: "#A0A3BD",
+                      color: "#A2B7D3",
                       marginVertical: 10,
                     }}
                   >

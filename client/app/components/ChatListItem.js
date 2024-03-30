@@ -86,6 +86,7 @@ const ChatListItem = ({ chatRoom, navigation }) => {
               style={{
                 fontFamily: "PlusJakartaSans",
                 fontSize: 12,
+                color: "#A2B7D3",
               }}
             >
               {format(new Date(time), "HH:mm")}

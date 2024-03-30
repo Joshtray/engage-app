@@ -114,4 +114,29 @@ router.get("/chatroom/:id/messages", isAuth, async (req, res) => {
   }
 });
 
+router.get("/find-chatroom", isAuth, async (req, res) => {
+  try {
+    const { user } = req;
+    if (!user)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const { user2 } = req.query;
+
+    const chatroom = await Chatroom.findOne({
+      $or: [
+        { $and: [{ user1: user._id }, { user2: user2 }] },
+        { $and: [{ user1: user2 }, { user2: user._id }] },
+      ],
+    }).populate("user1 user2 messages");
+
+    if (!chatroom)
+      return res
+        .status(404)
+        .json({ success: false, message: "Chatroom not found" });
+
+    return res.json({ success: true, chatroom });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
 module.exports = router;
