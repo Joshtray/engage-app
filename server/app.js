@@ -30,7 +30,7 @@ app.use(communityRouter);
 app.use(companyRouter);
 app.use(tagRouter);
 app.use(chatroomRouter);
-// app.use(messageRouter);
+app.use(messageRouter);
 
 app.get("/", (req, res) => {
   res.json({ success: true, message: "Welcome to the API" });

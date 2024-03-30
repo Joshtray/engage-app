@@ -146,6 +146,21 @@ router.get("/is-registered", isAuth, async (req, res) => {
   }
 });
 
+router.get("/connection-requests", isAuth, async (req, res) => {
+  try {
+    const { user } = req;
+    if (!user)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const currUser = await User.findById(user._id);
+    const requests = await User.find({ _id: { $in: currUser?.requests } });
+    return res.status(200).json({ success: true, requests });
+  }
+  catch (error) {
+    return res.status(500).json(error);
+  }
+})
+
 router.post("/add-connection", isAuth, async (req, res) => {
   try {
     const { user } = req;
