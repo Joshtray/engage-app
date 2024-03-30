@@ -10,7 +10,6 @@ import {
 import React, { useEffect, useState } from "react";
 import client from "../api/client";
 import ActivityListing from "./ActivityListing";
-import AppLoader from "./AppLoader";
 import { ScrollView } from "react-native-gesture-handler";
 import { Entypo, Feather } from "react-native-vector-icons";
 import { useLogin } from "../context/LoginProvider";
@@ -28,8 +27,11 @@ Notifications.setNotificationHandler({
 });
 
 const Home = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
+  const [matchLoading, setMatchLoading] = useState(false);
+  const [rouletteLoading, setRouletteLoading] = useState(false);
   const [match, setMatch] = useState({});
+  const [rouletteMatch, setRouletteMatch] = useState({});
+
   const { profile, fetchUser } = useLogin();
 
   const scheduleNotification = async () => {
@@ -74,7 +76,7 @@ const Home = ({ navigation }) => {
   };
 
   const getMatch = async () => {
-    setLoading(true);
+    setMatchLoading(true);
     try {
       const token = await AsyncStorage.getItem("token");
       await client
@@ -95,12 +97,43 @@ const Home = ({ navigation }) => {
       console.log(error);
     } finally {
       fetchUser();
-      setLoading(false);
+      setMatchLoading(false);
+    }
+  };
+
+  const getLunchRoulette = async (refresh = false) => {
+    setRouletteLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      console.log(refresh);
+      await client
+        .get("/lunch-roulette", {
+          params: {
+            refresh,
+          },
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((res) => {
+          if (res.data.success) {
+            setRouletteMatch(res.data.rouletteMatch);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      fetchUser();
+      setRouletteLoading(false);
     }
   };
 
   useEffect(() => {
     getMatch();
+    getLunchRoulette();
   }, []);
   useEffect(() => {
     if (profile.matchExpiry) {
@@ -111,6 +144,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       getMatch();
+      getLunchRoulette();
       fetchUser();
     });
 
@@ -194,7 +228,7 @@ const Home = ({ navigation }) => {
               >
                 Your next match:
               </Text>
-              {!loading && profile.matchExpiry && (
+              {!matchLoading && profile.matchExpiry && (
                 <Text
                   style={{
                     fontSize: 16,
@@ -222,7 +256,7 @@ const Home = ({ navigation }) => {
                 justifyContent: "center",
               }}
             >
-              {loading ? (
+              {matchLoading ? (
                 <Text
                   style={{
                     fontFamily: "PlusJakartaSansBold",
@@ -445,9 +479,9 @@ const Home = ({ navigation }) => {
               style={{
                 backgroundColor: "#0B2C7F",
                 borderRadius: 20,
-                height: 160,
+                height: 190,
                 width: "100%",
-                margin: 20,
+                marginHorizontal: 20,
                 marginVertical: 5,
                 borderWidth: 1,
                 borderRadius: 20,
@@ -458,26 +492,92 @@ const Home = ({ navigation }) => {
                 justifyContent: "center",
               }}
             >
+              {rouletteLoading ? (
+                <Text
+                  style={{
+                    color: "white",
+                    fontFamily: "PlusJakartaSansBold",
+                    fontSize: 16,
+                  }}
+                >
+                  Loading...
+                </Text>
+              ) : rouletteMatch?._id ? (
+                <TouchableOpacity
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  onPress={() =>
+                    navigation.navigate("Profile", { user: rouletteMatch })
+                  }
+                >
+                  <Image
+                    source={
+                      rouletteMatch.avatar
+                        ? {
+                            uri: rouletteMatch.avatar,
+                          }
+                        : require("../../assets/profile.png")
+                    }
+                    style={{
+                      width: 100,
+                      height: 100,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontFamily: "PlusJakartaSansBold",
+                      fontSize: 18,
+                      color: "white",
+                    }}
+                  >
+                    {rouletteMatch.fullname}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "PlusJakartaSans",
+                      fontSize: 14,
+                      color: "white",
+                    }}
+                  >
+                    {rouletteMatch.email}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <Text
+                  style={{
+                    color: "white",
+                    fontFamily: "PlusJakartaSansBold",
+                    fontSize: 16,
+                  }}
+                >
+                  No matches available
+                </Text>
+              )}
+            </View>
+            <TouchableOpacity
+              style={{
+                marginTop: 10,
+                width: "100%",
+              }}
+              onPress={() => getLunchRoulette((refresh = true))}
+            >
               <Text
                 style={{
-                  color: "white",
-                  fontFamily: "PlusJakartaSansBold",
                   fontSize: 16,
+                  fontFamily: "PlusJakartaSansMedium",
+                  color: "#0B2C7F",
+                  textAlign: "center",
                 }}
               >
-                Coming soon!
+                Generate new pairing
               </Text>
-            </View>
-            <Text
-              style={{
-                marginTop: 20,
-                fontSize: 16,
-                fontFamily: "PlusJakartaSansMedium",
-                color: "#0B2C7F",
-              }}
-            >
-              Generate new pairing
-            </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

@@ -73,6 +73,13 @@ const userSchema = new mongoose.Schema({
   org: {
     type: String,
   },
+  rouletteMatch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  rouletteExpiry: {
+    type: Date,
+  },
 });
 
 userSchema.pre("save", function (next) {

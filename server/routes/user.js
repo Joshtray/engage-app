@@ -155,11 +155,10 @@ router.get("/connection-requests", isAuth, async (req, res) => {
     const currUser = await User.findById(user._id);
     const requests = await User.find({ _id: { $in: currUser?.requests } });
     return res.status(200).json({ success: true, requests });
-  }
-  catch (error) {
+  } catch (error) {
     return res.status(500).json(error);
   }
-})
+});
 
 router.post("/add-connection", isAuth, async (req, res) => {
   try {
@@ -221,7 +220,7 @@ router.post("/add-connection", isAuth, async (req, res) => {
         connUser.chatRooms = [];
       }
       connUser.chatRooms.push(chatroom._id);
-      
+
       await User.findByIdAndUpdate(connUser._id, connUser);
     } else {
       if (!currUser.sentRequests) {
@@ -366,4 +365,44 @@ router.get("/get-match", isAuth, async (req, res) => {
   }
 });
 
+router.get("/lunch-roulette", isAuth, async (req, res) => {
+  try {
+    const { user } = req;
+    const { refresh } = req.query;
+
+    if (!user)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    if (
+      user.rouletteMatch &&
+      user.rouletteExpiry > new Date() &&
+      refresh === "false"
+    ) {
+      const match = await User.findById(user.rouletteMatch);
+      const { password, emailToken, ...sharedUser } = match._doc;
+      return res.status(200).json({ success: true, rouletteMatch: sharedUser });
+    }
+
+    const currUser = await User.findById(user._id);
+    const usersList = await User.find({
+      company: currUser.company,
+      _id: { $ne: currUser._id },
+    });
+
+    const rouletteMatch =
+      usersList[Math.floor(Math.random() * usersList.length)];
+
+    // Update current user's roulette match
+    currUser.rouletteMatch = rouletteMatch._id;
+    // Match resets at the start of the next day
+    currUser.rouletteExpiry = new Date(new Date().setHours(23, 59, 59, 999));
+
+    await User.findByIdAndUpdate(currUser._id, currUser);
+
+    // console.log(rouletteMatch);
+    return res.status(200).json({ success: true, rouletteMatch });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
 module.exports = router;
