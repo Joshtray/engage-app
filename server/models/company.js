@@ -7,6 +7,7 @@ const companySchema = new mongoose.Schema({
   },
   employees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Activity" }],
+  events: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
 });
 
 module.exports = mongoose.model("Company", companySchema);

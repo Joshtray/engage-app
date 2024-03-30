@@ -17,6 +17,7 @@ import { Ionicons } from "react-native-vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns";
 import * as Notifications from "expo-notifications";
+import EventListing from "./EventListing";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -29,8 +30,11 @@ Notifications.setNotificationHandler({
 const Home = ({ navigation }) => {
   const [matchLoading, setMatchLoading] = useState(false);
   const [rouletteLoading, setRouletteLoading] = useState(false);
+  const [eventsLoading, setEventsLoading] = useState(false);
+
   const [match, setMatch] = useState({});
   const [rouletteMatch, setRouletteMatch] = useState({});
+  const [events, setEvents] = useState([]);
 
   const { profile, fetchUser } = useLogin();
 
@@ -131,9 +135,35 @@ const Home = ({ navigation }) => {
     }
   };
 
+  const getEvents = async () => {
+    setEventsLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await client
+        .get("/company-events", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((res) => {
+          if (res.data.success) {
+            setEvents(res.data.events);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setEventsLoading(false);
+    }
+  };
+
   useEffect(() => {
     getMatch();
     getLunchRoulette();
+    getEvents();
   }, []);
   useEffect(() => {
     if (profile.matchExpiry) {
@@ -145,6 +175,7 @@ const Home = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
       getMatch();
       getLunchRoulette();
+      getEvents();
       fetchUser();
     });
 
@@ -449,6 +480,7 @@ const Home = ({ navigation }) => {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
+              marginTop: 40,
             }}
           >
             <Text
@@ -457,7 +489,6 @@ const Home = ({ navigation }) => {
                 // lineHeight: 50,
                 fontFamily: "PlusJakartaSansBold",
                 textTransform: "uppercase",
-                marginTop: 50,
                 marginBottom: 0,
               }}
             >
@@ -578,6 +609,75 @@ const Home = ({ navigation }) => {
                 Generate new pairing
               </Text>
             </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginTop: 40,
+              marginBottom: 100,
+              minHeight: 150,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                lineHeight: 50,
+                fontFamily: "PlusJakartaSansSemiBold",
+              }}
+            >
+              Company Events:
+            </Text>
+            {eventsLoading ? (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: 1,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSansMedium",
+                    color: "#3C3C43",
+                    opacity: 0.6,
+                    fontSize: 16,
+                  }}
+                >
+                  Loading...
+                </Text>
+              </View>
+            ) : events?.length ? (
+              <ScrollView
+                style={{ width: "100%" }}
+                showsVerticalScrollIndicator={false}
+              >
+                {events.map((event) => (
+                  <EventListing key={event._id} event={event} />
+                ))}
+              </ScrollView>
+            ) : (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: 1,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSansMedium",
+                    color: "#3C3C43",
+                    opacity: 0.6,
+                    fontSize: 16,
+                  }}
+                >
+                  No upcoming events
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
