@@ -42,15 +42,19 @@ const ChatListItem = ({ chatRoom, navigation }) => {
         >
           <Image
             resizeMode="cover"
-            source={{
-              uri:
-                otherUser.avatar ||
-                "https://img.freepik.com/free-photo/people-having-fun-wedding-hall_1303-19593.jpg?w=1800&t=st=1702013128~exp=1702013728~hmac=3de0e03364fbdec43b157e208a9765e85ea06fe930ac4b33b459ed05c9388871",
-            }}
+            source={
+              otherUser.avatar
+                ? {
+                    uri: otherUser.avatar,
+                  }
+                : require("../../assets/profile.png")
+            }
             style={{
               maxWidth: "100%",
               height: "100%",
               borderRadius: 24,
+              borderColor: "#A2B7D3",
+              borderWidth: 0.5,
             }}
           />
         </View>

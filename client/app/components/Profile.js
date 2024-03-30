@@ -188,7 +188,7 @@ const Profile = ({ route, navigation }) => {
               source={
                 user.avatar
                   ? { uri: user.avatar }
-                  : require("../../assets/icon.png")
+                  : require("../../assets/profile.png")
               }
               style={{
                 width: "100%",

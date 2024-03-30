@@ -55,14 +55,16 @@ const CustomDrawer = (props) => {
                 borderRadius: 30,
               }}
             >
-              {profile.avatar && (
-                <Image
-                  source={{
-                    uri: profile.avatar,
-                  }}
-                  style={{ width: 60, height: 60, borderRadius: 30 }}
-                />
-              )}
+              <Image
+                source={
+                  profile.avatar
+                    ? {
+                        uri: profile.avatar,
+                      }
+                    : require("../../assets/profile.png")
+                }
+                style={{ width: 60, height: 60, borderRadius: 30 }}
+              />
             </View>
           </TouchableOpacity>
           <View

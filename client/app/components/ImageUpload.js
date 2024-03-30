@@ -99,14 +99,17 @@ const ImageUpload = (props) => {
             onPress={openImageLibrary}
             style={styles.uploadButtonContainer}
           >
-            {image ? (
-              <Image
-                source={{ uri: image }}
-                style={{ width: "100%", height: "100%" }}
-              />
-            ) : (
-              <Text style={styles.uploadButton}>Upload Profile Image</Text>
-            )}
+            <Image
+              source={
+                image
+                  ? {
+                      uri: image,
+                    }
+                  : require("../../assets/profile.png")
+              }
+              style={{ width: "100%", height: "100%" }}
+            />
+
             {progress ? <UploadProgress progress={progress} /> : null}
           </TouchableOpacity>
           <Text

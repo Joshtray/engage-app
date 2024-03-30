@@ -193,7 +193,7 @@ const ChatRoom = ({ route, navigation }) => {
           <TextInput
             style={{
               flex: 1,
-              backgroundColor: "#E5E5E5",
+              backgroundColor: "#EFEFEF",
               borderRadius: 10,
               padding: 10,
               fontSize: 16,

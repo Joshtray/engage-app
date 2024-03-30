@@ -197,7 +197,7 @@ const Activity = ({ route, navigation }) => {
             source={
               owner.avatar
                 ? { uri: owner.avatar }
-                : require("../../assets/icon.png")
+                : require("../../assets/profile.png")
             }
             style={{
               width: 25,

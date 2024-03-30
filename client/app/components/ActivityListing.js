@@ -173,27 +173,21 @@ const ActivityListing = (props) => {
                 navigation.navigate("Profile", { user: owner });
               }}
             >
-              {owner.avatar ? (
-                <Image
-                  source={{ uri: owner.avatar }}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: 100,
-                    marginRight: 5,
-                  }}
-                />
-              ) : (
-                <Image
-                  source={require("../../assets/icon.png")}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: 100,
-                    marginRight: 5,
-                  }}
-                />
-              )}
+              <Image
+                source={
+                  owner.avatar
+                    ? {
+                        uri: owner.avatar,
+                      }
+                    : require("../../assets/profile.png")
+                }
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 100,
+                  marginRight: 5,
+                }}
+              />
               <Text
                 style={{
                   fontSize: 12,

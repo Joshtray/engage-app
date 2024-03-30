@@ -281,13 +281,19 @@ const Home = ({ navigation }) => {
                     }
                   >
                     <Image
-                      source={{
-                        uri: match.avatar,
-                      }}
+                      source={
+                        match.avatar
+                          ? {
+                              uri: match.avatar,
+                            }
+                          : require("../../assets/profile.png")
+                      }
                       style={{
                         width: 60,
                         height: 60,
                         borderRadius: 30,
+                        borderColor: "#A2B7D3",
+                        borderWidth: 0.5,
                       }}
                     />
                     <View

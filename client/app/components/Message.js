@@ -27,7 +27,7 @@ const Message = ({ message, userId }) => {
       </Text>}
       <View
         style={{
-          backgroundColor: message.sender === userId ? "#0B2C7F" : "#E5E5E5",
+          backgroundColor: message.sender === userId ? "#0B2C7F" : "#A2B7D320",
           padding: 10,
           borderRadius: 10,
           maxWidth: "70%",
