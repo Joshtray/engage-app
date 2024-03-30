@@ -70,7 +70,6 @@ router.get("/send-verification-email", isAuth, async (req, res) => {
 router.get("/verify-email/:emailToken", async (req, res) => {
   const { emailToken } = req.params;
   const user = await User.findOne({ emailToken });
-  console.log(user);
   if (!user)
     return res
       .status(404)
@@ -272,7 +271,6 @@ router.post("/update-match-schedule", isAuth, async (req, res) => {
     currUser.matchSchedule = schedule;
 
     const interval = parser.parseExpression(schedule);
-    console.log(interval.next());
     currUser.matchExpiry = interval.next();
     await User.findByIdAndUpdate(currUser._id, currUser);
     return res.status(201).json({ success: true, user: currUser });
@@ -305,10 +303,6 @@ router.get("/get-match", isAuth, async (req, res) => {
       ]);
       // collect data from script
       python.stdout.on("data", (data) => {
-        // const
-        //   match
-        //   = await User.findById(data.toString());
-        // return res.status(200).json({ success: true, match });
         console.log("Running matching algorithm ...");
         matchId = data.toString().trim();
       });
@@ -400,7 +394,6 @@ router.get("/lunch-roulette", isAuth, async (req, res) => {
 
     await User.findByIdAndUpdate(currUser._id, currUser);
 
-    // console.log(rouletteMatch);
     return res.status(200).json({ success: true, rouletteMatch });
   } catch (error) {
     return res.status(500).json(error);

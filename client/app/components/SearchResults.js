@@ -35,7 +35,6 @@ const SearchResults = ({ route, navigation }) => {
           },
         })
         .then((res) => {
-          console.log(res.data);
           if (res.data.success) {
             setSearchQueryLabel(query);
             setSearchResults(res.data.activities);

@@ -109,7 +109,6 @@ const Home = ({ navigation }) => {
     setRouletteLoading(true);
     try {
       const token = await AsyncStorage.getItem("token");
-      console.log(refresh);
       await client
         .get("/lunch-roulette", {
           params: {

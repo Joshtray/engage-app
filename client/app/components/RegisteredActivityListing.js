@@ -39,9 +39,6 @@ const RegisteredActivityListing = ({ activity, navigation }) => {
   };
 
   const scheduleNotification = async () => {
-    // await Notifications.getAllScheduledNotificationsAsync().then((res) => {
-    //   console.log("Scheduled notifications: ", res);
-    // });
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
         name: "default",

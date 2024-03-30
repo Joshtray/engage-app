@@ -20,13 +20,11 @@ const ChatList = ({ navigation }) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         if (res.data.success) {
           setChats(res.data.chatrooms);
         }
       })
       .catch((e) => {
-        console.log(e.response.data)
         console.log("Error in getting chat rooms: ", e);
       })
       .finally(() => {

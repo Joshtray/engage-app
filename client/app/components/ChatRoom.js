@@ -38,7 +38,6 @@ const ChatRoom = ({ route, navigation }) => {
           },
         })
         .then((res) => {
-          console.log(res.data);
           if (res.data.success) {
             setChatRoom(res.data.chatroom);
           }
@@ -53,7 +52,6 @@ const ChatRoom = ({ route, navigation }) => {
     }
   };
   const handleSend = async () => {
-    console.log("New message:", newMessage);
     if (!newMessage) return;
 
     setLoading(true);
@@ -78,7 +76,6 @@ const ChatRoom = ({ route, navigation }) => {
           }
         )
         .then((res) => {
-          console.log(res.data);
           if (res.data.success) {
             getChatRoom();
             setNewMessage("");

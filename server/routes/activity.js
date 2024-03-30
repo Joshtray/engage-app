@@ -330,7 +330,6 @@ router.get("/search", isAuth, async (req, res) => {
 
     const activities = await Activity.aggregate(pipeline);
 
-    console.log(activities);
     res.status(200).json({ success: true, activities });
   } catch (error) {
     console.log(error);

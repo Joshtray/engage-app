@@ -41,36 +41,6 @@ const CreateActivity = () => {
   const handleSubmit = async () => {
     setLoading(true);
 
-    // try {
-    //   const token = await AsyncStorage.getItem("token");
-
-    //   if (token) {
-    //     const response = await client.post("/upload-profile", formData, {
-    //       headers: {
-    //         Accept: "application/json",
-    //         "Content-Type": "multipart/form-data",
-    //         Authorization: token,
-    //       },
-    //       onUploadProgress: ({ loaded, total }) => {
-    //         console.log(loaded, total);
-    //         setProgress(loaded / total);
-    //       },
-    //     });
-
-    //     if (response.data.success) {
-    //       setProfile({ ...profile, avatar: image });
-    //       props.navigation.dispatch(StackActions.replace("DrawerNavigator"));
-    //     }
-    //   } else {
-    //     setIsLoggedIn(false);
-    //     setIsVerified(false);
-    //   }
-    // } catch (err) {
-    //   updateError(err.message, setError);
-    //   console.log(err);
-    // } finally {
-    //   setLoading(false);
-    // }
     const data = {
       name,
       description,
@@ -96,21 +66,6 @@ const CreateActivity = () => {
         return formData;
       }, new FormData());
 
-    // try {
-    //   const token = await AsyncStorage.getItem("token");
-
-    //   if (token) {
-    //     const response = await client.post("/upload-profile", formData, {
-    //       headers: {
-    //         Accept: "application/json",
-    //         "Content-Type": "multipart/form-data",
-    //         Authorization: token,
-    //       },
-    //       onUploadProgress: ({ loaded, total }) => {
-    //         console.log(loaded, total);
-    //         setProgress(loaded / total);
-    //       },
-    //     });
     const token = await AsyncStorage.getItem("token");
 
     if (!token) {
@@ -128,7 +83,6 @@ const CreateActivity = () => {
           },
         })
         .then((res) => {
-          console.log(res.data);
           if (res.data.success) {
             navigation.goBack();
           }

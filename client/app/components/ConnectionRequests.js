@@ -20,7 +20,6 @@ const ConnectionRequests = ({ navigation }) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         if (res.data.success) {
           setRequests(res.data.requests);
         }

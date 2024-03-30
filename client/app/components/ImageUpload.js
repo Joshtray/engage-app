@@ -60,7 +60,6 @@ const ImageUpload = (props) => {
               Authorization: token,
             },
             onUploadProgress: ({ loaded, total }) => {
-              console.log(loaded, total);
               setProgress(loaded / total);
             },
           })

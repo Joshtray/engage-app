@@ -53,7 +53,6 @@ const EditActivity = ({ route, navigation }) => {
     setLoading(true);
     try {
       const token = await AsyncStorage.getItem("token");
-      console.log(newImage);
       const data = {
         id: activity._id,
         name,
@@ -82,7 +81,6 @@ const EditActivity = ({ route, navigation }) => {
           return formData;
         }, new FormData());
 
-      console.log(formData(data));
       await client
         .post("/update-activity", formData(data), {
           headers: {
@@ -132,7 +130,6 @@ const EditActivity = ({ route, navigation }) => {
 
       if (!result.canceled) {
         setNewImage(true);
-        console.log(result.assets[0].uri);
         setImage(result.assets[0].uri);
       }
     } catch (error) {

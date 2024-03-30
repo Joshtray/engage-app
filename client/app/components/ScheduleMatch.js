@@ -69,7 +69,6 @@ const ScheduleMatch = ({ navigation }) => {
         )
 
         .then((res) => {
-          console.log(res.data);
           if (res.data.success) {
             console.log("Match schedule updated successfully");
             navigation.navigate("Home");
@@ -276,7 +275,6 @@ const ScheduleMatch = ({ navigation }) => {
         title={`Save`}
         onPress={() => {
           const cronSchedule = generateCronSchedule();
-          console.log("Cron Schedule: ", cronSchedule);
           updateMatchSchedule(cronSchedule);
         }}
         disabled={!frequency}
