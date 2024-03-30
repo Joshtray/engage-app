@@ -12,21 +12,22 @@ import client from "../api/client";
 import ActivityListing from "./ActivityListing";
 import AppLoader from "./AppLoader";
 import { ScrollView } from "react-native-gesture-handler";
-import { Entypo } from "react-native-vector-icons";
 import { useLogin } from "../context/LoginProvider";
-import { FontAwesome, SimpleLineIcons } from "react-native-vector-icons";
+import { FontAwesome, Entypo, Octicons } from "react-native-vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns";
 import RegisteredActivityListing from "./RegisteredActivityListing";
+import SearchBar from "./SearchBar";
 
 const Activities = ({ navigation }) => {
-  const { loginPending, setLoginPending, profile, fetchUser } =
-    useLogin();
+  const { loginPending, setLoginPending, fetchUser } = useLogin();
   const [activities, setActivities] = useState([]);
   const [registeredActivities, setRegisteredActivities] = useState({});
+  const [query, setQuery] = useState("");
 
   const getActivities = async () => {
     setLoginPending(true);
+    setQuery("");
     const token = await AsyncStorage.getItem("token");
     let registeredActivityMap = {};
     await client
@@ -70,6 +71,15 @@ const Activities = ({ navigation }) => {
     setLoginPending(false);
   };
 
+  const searchActivities = async () => {
+    if (!query) {
+      return;
+    }
+    navigation.navigate("SearchResults", {
+      query,
+    });
+  };
+
   useEffect(() => {
     fetchUser();
     getActivities();
@@ -94,63 +104,11 @@ const Activities = ({ navigation }) => {
             paddingHorizontal: 20,
           }}
         >
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 15,
-              borderWidth: 1,
-              borderColor: "#A2B7D3",
-              height: 50,
-              width: "100%",
-              marginBottom: 30,
-              backgroundColor: "#FAFAFA",
-            }}
-          >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                columnGap: 10,
-              }}
-            >
-              <FontAwesome
-                name="search"
-                size={20}
-                color="#3C3C43"
-                opacity={0.6}
-              />
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#3C3C43",
-                  opacity: 0.6,
-                  fontFamily: "PlusJakartaSansMedium",
-                }}
-              >
-                Find a new activity!
-              </Text>
-            </View>
-            <TextInput
-              // {...props}
-              style={{
-                // borderWidth: 1,
-                width: "100%",
-                textAlign: "center",
-                height: "100%",
-                fontSize: 16,
-                fontFamily: "PlusJakartaSansBold",
-                position: "absolute",
-                backgroundColor: "transparent",
-              }}
-              // onFocus={() => setInputColor("#0B2C7F")}
-              // onBlur={() => setInputColor("#95989D")}
-            />
-          </View>
+          <SearchBar
+            handleSearch={searchActivities}
+            query={query}
+            setQuery={setQuery}
+          />
           <View
             style={{
               marginBottom: 20,

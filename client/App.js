@@ -20,6 +20,7 @@ import SelectInterests from "./app/components/SelectInterests";
 import JobDetails from "./app/components/JobDetails";
 import { StatusBar } from "expo-status-bar";
 import ChatRoom from "./app/components/ChatRoom";
+import SearchResults from "./app/components/SearchResults";
 
 const Stack = createStackNavigator();
 
@@ -57,6 +58,7 @@ const StackNavigator = ({ navigation }) => {
                   component={CreateActivity}
                 />
                 <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="SearchResults" component={SearchResults} />
                 <Stack.Screen name="Activity" component={Activity} />
                 <Stack.Screen name="MyActivity" component={MyActivity} />
                 <Stack.Screen name="EditActivity" component={EditActivity} />

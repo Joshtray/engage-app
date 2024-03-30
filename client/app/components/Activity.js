@@ -24,6 +24,7 @@ import client from "../api/client";
 import registerAlert from "../alerts/registerAlert";
 import unregisterAlert from "../alerts/unregisterAlert";
 import * as Calendar from "expo-calendar";
+import * as Notifications from "expo-notifications";
 
 const Activity = ({ route, navigation }) => {
   const { loginPending, setLoginPending, profile } = useLogin();
