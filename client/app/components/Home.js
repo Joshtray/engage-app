@@ -266,7 +266,7 @@ const Home = ({ navigation }) => {
                     height: "100%",
                   }}
                 >
-                  <View
+                  <TouchableOpacity
                     style={{
                       display: "flex",
                       flexDirection: "row",
@@ -276,6 +276,9 @@ const Home = ({ navigation }) => {
                       flex: 1,
                       padding: 20,
                     }}
+                    onPress={() =>
+                      navigation.navigate("Profile", { user: match })
+                    }
                   >
                     <Image
                       source={{
@@ -314,7 +317,7 @@ const Home = ({ navigation }) => {
                         {match.email}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       display: "flex",
