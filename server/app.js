@@ -6,6 +6,8 @@ const activityRouter = require("./routes/activity");
 const communityRouter = require("./routes/community");
 const companyRouter = require("./routes/company");
 const tagRouter = require("./routes/tag");
+const chatroomRouter = require("./routes/chatroom");
+const messageRouter = require("./routes/message");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -27,6 +29,8 @@ app.use(activityRouter);
 app.use(communityRouter);
 app.use(companyRouter);
 app.use(tagRouter);
+app.use(chatroomRouter);
+// app.use(messageRouter);
 
 app.get("/", (req, res) => {
   res.json({ success: true, message: "Welcome to the API" });
