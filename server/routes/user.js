@@ -324,6 +324,7 @@ router.get("/get-match", isAuth, async (req, res) => {
 
           if (match) {
             user.currentMatch = matchId;
+            user.matchAcceptance = "PENDING";
             const interval = parser.parseExpression(user.matchSchedule);
             user.matchExpiry = interval.next();
 

@@ -64,6 +64,9 @@ const userSchema = new mongoose.Schema({
   matchExpiry: {
     type: Date,
   },
+  matchAcceptance: {
+    type: String,
+  },
   jobTitle: {
     type: String,
   },

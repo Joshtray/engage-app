@@ -36,7 +36,7 @@ const Home = ({ navigation }) => {
   const [rouletteMatch, setRouletteMatch] = useState({});
   const [events, setEvents] = useState([]);
 
-  const { profile, fetchUser } = useLogin();
+  const { profile, fetchUser, setLoginPending } = useLogin();
 
   const scheduleNotification = async () => {
     // await Notifications.getAllScheduledNotificationsAsync().then((res) => {
@@ -157,6 +157,40 @@ const Home = ({ navigation }) => {
       console.log(error);
     } finally {
       setEventsLoading(false);
+    }
+  };
+
+  const updateMatchStatus = async (status) => {
+    setLoginPending(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await client
+        .post(
+          "/update-profile",
+          {
+            update: {
+              matchAcceptance: status,
+            },
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        )
+        .then((res) => {
+          if (res.data.success) {
+            console.log("Match status updated");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      fetchUser();
+      setLoginPending(false);
     }
   };
 
@@ -391,84 +425,141 @@ const Home = ({ navigation }) => {
                   </TouchableOpacity>
                   <View
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
                       height: "35%",
                       width: "100%",
                       borderBottomLeftRadius: 20,
                       borderBottomRightRadius: 20,
                     }}
                   >
-                    <TouchableOpacity
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                        width: "50%",
-                      }}
-                    >
+                    {!profile?.matchAcceptance ||
+                    profile?.matchAcceptance === "PENDING" ? (
                       <View
                         style={{
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "center",
                           alignItems: "center",
-                          height: "50%",
-                          width: "100%",
-                          borderRightWidth: 0.5,
-                          borderColor: "#A2B7D3",
+                          height: "100%",
                         }}
                       >
-                        <Feather name="check" size={24} color="#34A853" />
-                        <Text
+                        <TouchableOpacity
                           style={{
-                            fontFamily: "PlusJakartaSansSemiBold",
-                            fontSize: 14,
-                            marginLeft: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100%",
+                            width: "50%",
+                          }}
+                          onPress={() => {
+                            updateMatchStatus("ACCEPTED");
                           }}
                         >
-                          Accept
-                        </Text>
+                          <View
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              height: "50%",
+                              width: "100%",
+                              borderRightWidth: 0.5,
+                              borderColor: "#A2B7D3",
+                            }}
+                          >
+                            <Feather name="check" size={24} color="#34A853" />
+                            <Text
+                              style={{
+                                fontFamily: "PlusJakartaSansSemiBold",
+                                fontSize: 14,
+                                marginLeft: 10,
+                              }}
+                            >
+                              Accept
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100%",
+                            width: "50%",
+                          }}
+                          onPress={() => {
+                            updateMatchStatus("REJECTED");
+                          }}
+                        >
+                          <View
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              height: "50%",
+                              width: "100%",
+                              borderLeftWidth: 0.5,
+                              borderColor: "#A2B7D3",
+                            }}
+                          >
+                            <Ionicons name="close" size={24} color="#EA4335" />
+                            <Text
+                              style={{
+                                fontFamily: "PlusJakartaSansSemiBold",
+                                fontSize: 14,
+                                marginLeft: 10,
+                              }}
+                            >
+                              Reject
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
                       </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                        width: "50%",
-                      }}
-                    >
+                    ) : profile?.matchAcceptance === "ACCEPTED" ? (
                       <View
                         style={{
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "center",
                           alignItems: "center",
-                          height: "50%",
+                          height: "100%",
                           width: "100%",
-                          borderLeftWidth: 0.5,
-                          borderColor: "#A2B7D3",
                         }}
                       >
-                        <Ionicons name="close" size={24} color="#EA4335" />
                         <Text
                           style={{
                             fontFamily: "PlusJakartaSansSemiBold",
                             fontSize: 14,
-                            marginLeft: 10,
+                            color: "#34A85380",
                           }}
                         >
-                          Reject
+                          Accepted
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    ) : (
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: "100%",
+                          width: "100%",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: "PlusJakartaSansSemiBold",
+                            fontSize: 14,
+                            color: "#EA433580",
+                          }}
+                        >
+                          Rejected
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 </View>
               )}
