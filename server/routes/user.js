@@ -20,6 +20,7 @@ const parser = require("cron-parser");
 const User = require("../models/user");
 const Company = require("../models/company");
 const Tag = require("../models/tag");
+const Chatroom = require("../models/chatroom");
 const multer = require("multer");
 const { spawn } = require("child_process");
 const Domain = require("../models/domain");
@@ -173,13 +174,26 @@ router.post("/add-connection", isAuth, async (req, res) => {
       currUser.connections.push(id);
 
       currUser.requests = currUser.requests.filter(
-        (requestId) => requestId !== id
+        (requestId) => requestId.toString() !== id
       );
+
+      // Create a chatroom between the two users
+      const chatroom = new Chatroom({
+        user1: currUser._id,
+        user2: id,
+      });
+      await chatroom.save();
+
+      if (!currUser.chatRooms) {
+        currUser.chatRooms = [];
+      }
+      currUser.chatRooms.push(chatroom._id);
+
       const connUser = await User.findById(id);
 
       // Remove current user from sent requests
       connUser.sentRequests = connUser.sentRequests.filter(
-        (requestId) => requestId !== currUser._id
+        (requestId) => requestId.toString() !== currUser._id.toString()
       );
 
       if (!connUser.connections) {
@@ -188,6 +202,11 @@ router.post("/add-connection", isAuth, async (req, res) => {
       // Add current user to connections of connUser
       connUser.connections.push(currUser._id);
 
+      if (!connUser.chatRooms) {
+        connUser.chatRooms = [];
+      }
+      connUser.chatRooms.push(chatroom._id);
+      
       await User.findByIdAndUpdate(connUser._id, connUser);
     } else {
       if (!currUser.sentRequests) {
