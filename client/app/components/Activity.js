@@ -143,7 +143,13 @@ const Activity = ({ route, navigation }) => {
       }}
     >
       <Image
-        source={{ uri: activity.image }}
+        source={
+          activity.image
+            ? {
+                uri: activity.image,
+              }
+            : require("../../assets/activity-image.png")
+        }
         style={{ width: "100%", height: "40%" }}
       />
       <LinearGradient

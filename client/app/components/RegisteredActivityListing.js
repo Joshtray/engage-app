@@ -109,17 +109,18 @@ const RegisteredActivityListing = ({ activity, navigation }) => {
         style={{
           width: "100%",
           height: "60%",
-          backgroundColor: "#A2B7D3",
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
         }}
       >
         <Image
-          source={{
-            uri:
-              activity.image ||
-              "https://img.freepik.com/free-photo/people-having-fun-wedding-hall_1303-19593.jpg?w=1800&t=st=1702013128~exp=1702013728~hmac=3de0e03364fbdec43b157e208a9765e85ea06fe930ac4b33b459ed05c9388871",
-          }}
+          source={
+                activity.image
+                  ? {
+                      uri: activity.image,
+                    }
+                  : require("../../assets/activity-image.png")
+              }
           style={{
             width: "100%",
             height: "100%",
