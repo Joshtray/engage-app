@@ -59,7 +59,6 @@ const ScheduleMatch = ({ navigation }) => {
           "/update-match-schedule",
           {
               schedule: cronSchedule,
-            // schedule: "*/5 * * * *",
           },
           {
             headers: {

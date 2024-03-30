@@ -15,10 +15,10 @@ const SignUpForm = ({ navigation, scrollView }) => {
     useLogin();
 
   const [userInfo, setUserInfo] = useState({
-    fullname: "James",
-    email: "jesseyuchenwichi@gmail.com",
-    password: "password",
-    confirmPassword: "password",
+    fullname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
 

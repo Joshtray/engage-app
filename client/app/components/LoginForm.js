@@ -13,8 +13,8 @@ const LoginForm = ({ navigation, scrollView }) => {
   const { setIsLoggedIn, setProfile, setIsVerified, setLoginPending } =
     useLogin();
   const [userInfo, setUserInfo] = useState({
-    email: "jessey@uni.minerva.edu",
-    password: "password",
+    email: "",
+    password: "",
   });
   const [error, setError] = useState("");
 
