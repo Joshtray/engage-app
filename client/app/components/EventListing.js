@@ -96,7 +96,7 @@ const EventListing = ({ event }) => {
             {event.description}
           </Text>
         </View>
-        <View
+        {/* <View
           style={{
             marginRight: 20,
             display: "flex",
@@ -105,7 +105,6 @@ const EventListing = ({ event }) => {
             alignItems: "center",
           }}
         >
-          {/* <Octicons name="plus" size={30} color="#0B2C7F" /> */}
           <TouchableOpacity
             style={{
               width: 40,
@@ -114,35 +113,35 @@ const EventListing = ({ event }) => {
               justifyContent: "center",
               alignItems: "center",
             }}
-            // onPress={joined ? () => {} : async () => {
-            //   setLoginPending(true);
-            //   const token = await AsyncStorage.getItem("token");
-            //   const res = await client.post(
-            //     "/join",
-            //     { id: event._id },
-            //     {
-            //       method: "POST",
-            //       headers: {
-            //         "Content-Type": "application/json",
-            //         Authorization: token,
-            //       },
-            //     }
-            //   );
-            //   if (res.data.success) {
-            //     getEvents();
-            //   } else {
-            //     console.log(res.data.message);
-            //   }
-            //   setLoginPending(false);
-            // }}
+            onPress={joined ? () => {} : async () => {
+              setLoginPending(true);
+              const token = await AsyncStorage.getItem("token");
+              const res = await client.post(
+                "/join",
+                { id: event._id },
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                  },
+                }
+              );
+              if (res.data.success) {
+                getEvents();
+              } else {
+                console.log(res.data.message);
+              }
+              setLoginPending(false);
+            }}
           >
-            {/* <Octicons
+            <Octicons
               name="chevron-right"
               size={30}
               color="#0B2C7F"
-            /> */}
+            />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </View>
   );
