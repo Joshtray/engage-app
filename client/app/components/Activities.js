@@ -177,7 +177,6 @@ const Activities = ({ navigation }) => {
                     columnGap: 20,
                   }}
                   horizontal
-                  pagingEnabled
                   contentContainerStyle={{
                     justifyContent: "center",
                   }}
