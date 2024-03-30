@@ -15,7 +15,7 @@ exports.createUser = async (req, res) => {
   const emailToken = crypto.randomBytes(64).toString("hex");
 
   const domain = await Domain.findOne({ name: email.split("@")[1] });
-  
+
   const company = domain ? domain.company : null;
 
   const user = await User({
@@ -39,7 +39,7 @@ exports.sendEmail = (email, fullname, emailToken) => {
     },
   });
 
-  const url = `http://localhost:8000/verify-email/${emailToken}`;
+  const url = `${process.env.API_URL}/verify-email/${emailToken}`;
 
   const mailOptions = {
     from: '"engage" <jesseyuchenwichi@outlook.com>',
@@ -52,10 +52,8 @@ exports.sendEmail = (email, fullname, emailToken) => {
   };
 
   transporter.sendMail(mailOptions, function (err, info) {
-    if (err) 
-      console.log(err);
-    else 
-      console.log(info);
+    if (err) console.log(err);
+    else console.log(info);
   });
 };
 
