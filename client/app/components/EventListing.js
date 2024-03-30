@@ -136,12 +136,11 @@ const EventListing = ({ event }) => {
             //   setLoginPending(false);
             // }}
           >
-            <Octicons
-              // name={joined ? "chevron-right" : "plus"}
+            {/* <Octicons
               name="chevron-right"
               size={30}
               color="#0B2C7F"
-            />
+            /> */}
           </TouchableOpacity>
         </View>
       </View>
