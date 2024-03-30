@@ -89,7 +89,11 @@ const PastActivities = ({ navigation }) => {
               showsVerticalScrollIndicator={false}
             >
               {pastActivities.map((activity) => (
-                <PastActivityListing activity={activity} key={activity._id} />
+                <PastActivityListing
+                  activity={activity}
+                  key={activity._id}
+                  navigation={navigation}
+                />
               ))}
             </ScrollView>
           ) : (

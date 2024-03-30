@@ -20,7 +20,7 @@ import {
 import { useLogin } from "../context/LoginProvider";
 
 const PastActivityListing = (props) => {
-  const { activity } = props;
+  const { activity, navigation } = props;
   const { loginPending, setLoginPending } = useLogin();
 
   return (
@@ -36,9 +36,9 @@ const PastActivityListing = (props) => {
           borderTopWidth: 0.5,
           paddingVertical: 20,
         }}
-        // onPress={() => {
-        //   navigation.navigate("MyActivity", { activity });
-        // }}
+        onPress={() => {
+          navigation.navigate("MyActivity", { activity });
+        }}
       >
         <View
           style={{

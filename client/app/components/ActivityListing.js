@@ -25,6 +25,7 @@ const ActivityListing = (props) => {
   const { navigation, getActivities, activity } = props;
   const { setLoginPending, profile } = useLogin();
   const [owner, setOwner] = useState({});
+  const [canJoin, setCanJoin] = useState(false);
 
   const getOwner = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -35,6 +36,15 @@ const ActivityListing = (props) => {
     });
     if (res.data.success) {
       setOwner(res.data.user);
+    }
+    if (
+      activity.owner !== profile._id &&
+      !activity?.participants?.includes(profile._id) &&
+      new Date(activity.date) > new Date()
+    ) {
+      setCanJoin(true);
+    } else {
+      setCanJoin(false);
     }
   };
 
@@ -174,14 +184,14 @@ const ActivityListing = (props) => {
               onPress={() => {
                 navigation.navigate("Profile", { user: owner });
               }}
-              >
+            >
               <Image
                 source={
                   owner.avatar
-                  ? {
-                    uri: owner.avatar,
-                  }
-                  : require("../../assets/profile.png")
+                    ? {
+                        uri: owner.avatar,
+                      }
+                    : require("../../assets/profile.png")
                 }
                 style={{
                   width: 20,
@@ -324,26 +334,28 @@ const ActivityListing = (props) => {
             </View>
           </View>
         </View>
-        <TouchableOpacity
-          style={{
-            width: 40,
-            height: 40,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            borderWidth: 1,
-            borderRadius: 10,
-            marginRight: 10,
-            borderColor: "rgba(162, 183, 211, 0.5)",
-          }}
-          onPress={() => registerAlert(activity, joinActivity)}
-        >
-          <MaterialCommunityIcons
-            name="pencil-plus-outline"
-            size={30}
-            color="#0B2C7F"
-          />
-        </TouchableOpacity>
+        {canJoin && (
+          <TouchableOpacity
+            style={{
+              width: 40,
+              height: 40,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderWidth: 1,
+              borderRadius: 10,
+              marginRight: 10,
+              borderColor: "rgba(162, 183, 211, 0.5)",
+            }}
+            onPress={() => registerAlert(activity, joinActivity)}
+          >
+            <MaterialCommunityIcons
+              name="pencil-plus-outline"
+              size={30}
+              color="#0B2C7F"
+            />
+          </TouchableOpacity>
+        )}
         {/* <View style={{}}>
           <Text
             style={{

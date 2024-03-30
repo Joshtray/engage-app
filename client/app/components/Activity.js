@@ -388,15 +388,19 @@ const Activity = ({ route, navigation }) => {
           {activity.description}
         </Text>
       </ScrollView>
-      <FormSubmitButton
-        twoButton={joined}
-        title={joined ? "Add to Calendar" : "Join"}
-        onPress={() =>
-          joined ? addEventToCalendar() : registerAlert(activity, joinActivity)
-        }
-        title2="Unregister"
-        onPress2={() => unregisterAlert(activity, leaveActivity)}
-      />
+      {new Date(activity.date) > new Date() && (
+        <FormSubmitButton
+          twoButton={joined}
+          title={joined ? "Add to Calendar" : "Join"}
+          onPress={() =>
+            joined
+              ? addEventToCalendar()
+              : registerAlert(activity, joinActivity)
+          }
+          title2="Unregister"
+          onPress2={() => unregisterAlert(activity, leaveActivity)}
+        />
+      )}
       <LinearGradient
         colors={["#000000", "rgba(0, 0, 0, 0)"]}
         style={{

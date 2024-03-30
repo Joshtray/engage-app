@@ -22,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLogin } from "../context/LoginProvider";
 import client from "../api/client";
 import deleteActivityAlert from "../alerts/deleteActivityAlert";
+import * as Notifications from "expo-notifications";
 
 const MyActivity = ({ route, navigation }) => {
   const { loginPending, setLoginPending, profile } = useLogin();
@@ -267,15 +268,17 @@ const MyActivity = ({ route, navigation }) => {
           {activity.description}
         </Text>
       </ScrollView>
-      <FormSubmitButton
-        twoButton={true}
-        title="Edit"
-        onPress={() => {
-          navigation.navigate("EditActivity", { activity });
-        }}
-        title2="Cancel Activity"
-        onPress2={() => deleteActivityAlert(activity, deleteActivity)}
-      />
+      {new Date(activity.date) > new Date() && (
+        <FormSubmitButton
+          twoButton={true}
+          title="Edit"
+          onPress={() => {
+            navigation.navigate("EditActivity", { activity });
+          }}
+          title2="Cancel Activity"
+          onPress2={() => deleteActivityAlert(activity, deleteActivity)}
+        />
+      )}
       <LinearGradient
         colors={["#000000", "rgba(0, 0, 0, 0)"]}
         style={{
