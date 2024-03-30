@@ -43,8 +43,6 @@ const CustomDrawer = (props) => {
           <TouchableOpacity
             onPress={updateImage}
             style={{
-              borderColor: "#A2B7D3",
-              borderWidth: 1,
               borderRadius: 125 / 2,
             }}
           >
@@ -63,7 +61,13 @@ const CustomDrawer = (props) => {
                       }
                     : require("../../assets/profile.png")
                 }
-                style={{ width: 60, height: 60, borderRadius: 30 }}
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 30,
+                  borderColor: "#A2B7D3",
+                  borderWidth: 1,
+                }}
               />
             </View>
           </TouchableOpacity>

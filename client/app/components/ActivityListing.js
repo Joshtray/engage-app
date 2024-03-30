@@ -174,20 +174,22 @@ const ActivityListing = (props) => {
               onPress={() => {
                 navigation.navigate("Profile", { user: owner });
               }}
-            >
+              >
               <Image
                 source={
                   owner.avatar
-                    ? {
-                        uri: owner.avatar,
-                      }
-                    : require("../../assets/profile.png")
+                  ? {
+                    uri: owner.avatar,
+                  }
+                  : require("../../assets/profile.png")
                 }
                 style={{
                   width: 20,
                   height: 20,
                   borderRadius: 100,
                   marginRight: 5,
+                  borderColor: "#A2B7D3",
+                  borderWidth: 0.5,
                 }}
               />
               <Text

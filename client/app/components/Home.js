@@ -558,6 +558,8 @@ const Home = ({ navigation }) => {
                     style={{
                       width: 100,
                       height: 100,
+                      borderColor: "#A2B7D3",
+                      borderWidth: 0.5,
                     }}
                   />
                   <Text

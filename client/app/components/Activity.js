@@ -210,6 +210,8 @@ const Activity = ({ route, navigation }) => {
               height: 25,
               borderRadius: 100,
               marginRight: 10,
+              borderColor: "#A2B7D3",
+              borderWidth: 0.5,
             }}
           />
           <Text
