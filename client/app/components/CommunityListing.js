@@ -105,42 +105,49 @@ const CommunityListing = (props) => {
           }}
         >
           {/* <Octicons name="plus" size={30} color="#0B2C7F" /> */}
-          <TouchableOpacity
-            style={{
-              width: 40,
-              height: 40,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={joined ? () => {} : async () => {
-              setLoginPending(true);
-              const token = await AsyncStorage.getItem("token");
-              const res = await client.post(
-                "/join",
-                { id: community._id },
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token,
-                  },
+          {!joined && (
+            <TouchableOpacity
+              style={{
+                width: 40,
+                height: 40,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={
+                // joined
+                //   ? () => {} :
+                async () => {
+                  setLoginPending(true);
+                  const token = await AsyncStorage.getItem("token");
+                  const res = await client.post(
+                    "/join",
+                    { id: community._id },
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token,
+                      },
+                    }
+                  );
+                  if (res.data.success) {
+                    getCommunities();
+                  } else {
+                    console.log(res.data.message);
+                  }
+                  setLoginPending(false);
                 }
-              );
-              if (res.data.success) {
-                getCommunities();
-              } else {
-                console.log(res.data.message);
               }
-              setLoginPending(false);
-            }}
-          >
-            <Octicons
-              name={joined ? "chevron-right" : "plus"}
-              size={30}
-              color="#0B2C7F"
-            />
-          </TouchableOpacity>
+            >
+              <Octicons
+                // name={joined ? "chevron-right" : "plus"}
+                name="plus"
+                size={30}
+                color="#0B2C7F"
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
