@@ -158,7 +158,7 @@ const ChatRoom = ({ route, navigation }) => {
                   <Text
                     style={{
                       textAlign: "center",
-                      fontFamily: "PlusJakartaSans",
+                      fontFamily: "PlusJakartaSansMedium",
                       fontSize: 12,
                       color: "#A2B7D3",
                       marginVertical: 10,

@@ -20,7 +20,7 @@ const Message = ({ message, userId }) => {
           margin: 3,
           marginLeft: 0,
           fontSize: 8,
-          fontFamily: "PlusJakartaSans",
+          fontFamily: "PlusJakartaSansMedium",
         }}
       >
         {format(new Date(message.sentAt), "HH:mm")}
@@ -48,7 +48,7 @@ const Message = ({ message, userId }) => {
           margin: 3,
           marginRight: 0,
           fontSize: 8,
-          fontFamily: "PlusJakartaSans",
+          fontFamily: "PlusJakartaSansMedium",
         }}
       >
         {format(new Date(message.sentAt), "HH:mm")}

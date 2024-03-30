@@ -88,7 +88,7 @@ const ChatListItem = ({ chatRoom, navigation }) => {
           {time && (
             <Text
               style={{
-                fontFamily: "PlusJakartaSans",
+                fontFamily: "PlusJakartaSansMedium",
                 fontSize: 12,
                 color: "#A2B7D3",
               }}
