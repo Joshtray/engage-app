@@ -27,9 +27,9 @@ import CustomDateTimePicker from "./CustomDateTimePicker";
 
 const CreateActivity = () => {
   const [image, setImage] = useState(null);
-  const [name, setName] = useState("Test");
-  const [description, setDescription] = useState("testing...");
-  const [location, setLocation] = useState("test location");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [error, setError] = useState("");
