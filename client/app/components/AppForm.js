@@ -1,6 +1,8 @@
 import {
   Animated,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -67,25 +69,31 @@ const AppForm = ({ navigation }) => {
   }, []);
 
   return (
-    <>
+    <KeyboardAvoidingView
+      style={{
+        height: "100%",
+      }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <View
         style={{
           flex: 1,
           paddingTop: 50,
           display: "flex",
           flexDirection: "column",
+          backgroundColor: "#fff",
         }}
       >
         <View style={{ height: 100 }}>
           <FormHeader
-              heading={"engage"}
-              // leftHeading={"Welcome "}
-              // rightHeading={"Back"}
-              // subHeading={"engage"}
-              // leftHeaderTranslateX={leftHeaderTranslateX}
-              // rightHeaderOpacity={rightHeaderOpacity}
-              // rightHeaderTranslateY={rightHeaderTranslateY}
-            />
+            heading={"engage"}
+            // leftHeading={"Welcome "}
+            // rightHeading={"Back"}
+            // subHeading={"engage"}
+            // leftHeaderTranslateX={leftHeaderTranslateX}
+            // rightHeaderOpacity={rightHeaderOpacity}
+            // rightHeaderTranslateY={rightHeaderTranslateY}
+          />
         </View>
         {/* <View
             style={{
@@ -128,7 +136,7 @@ const AppForm = ({ navigation }) => {
         </ScrollView>
       </View>
       {loginPending && <AppLoader />}
-    </>
+    </KeyboardAvoidingView>
   );
 };
 

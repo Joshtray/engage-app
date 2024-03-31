@@ -12,8 +12,8 @@ const FormContainer = ({ children, style }) => {
   return (
     <KeyboardAvoidingView
       enabled
-      behavior="padding"
-      style={{...styles.container, ...style}}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ ...styles.container, ...style }}
     >
       {children}
     </KeyboardAvoidingView>

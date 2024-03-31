@@ -9,6 +9,7 @@ import client from "../api/client";
 import { StackActions } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import { signIn } from "../api/user";
+import { ScrollView } from "react-native-gesture-handler";
 
 const SignUpForm = ({ navigation, scrollView }) => {
   const { setIsLoggedIn, setProfile, setLoginPending, setIsVerified } =
@@ -70,75 +71,92 @@ const SignUpForm = ({ navigation, scrollView }) => {
   };
 
   return (
-    <FormContainer>
-      <Text
+    <View
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        width: Dimensions.get("window").width,
+      }}
+    >
+      <ScrollView
         style={{
-          fontFamily: "PlusJakartaSansBold",
-          fontSize: 25,
-          textAlign: "center",
-          marginVertical: Platform.OS === "ios" ? 45 : 20,
+          maxHeight: Dimensions.get("window").height - 300,
+          paddingHorizontal: 27,
+          zIndex: 1,
+          backgroundColor: "#fff",
         }}
       >
-        Create your account
-      </Text>
-      <Text
-        style={{
-          color: "red",
-          fontSize: 14,
-          fontFamily: "PlusJakartaSans",
-          textAlign: "center",
-        }}
-      >
-        {error}
-      </Text>
-      <FormInput
-        value={fullname}
-        label="Full Name"
-        onChangeText={(value) => handleOnChangeText(value, "fullname")}
-        placeholder="John Smith"
-      />
-      <FormInput
-        value={email}
-        autoCapitalize="none"
-        label="Company/Organization Email"
-        onChangeText={(value) => handleOnChangeText(value, "email")}
-        placeholder="example@email.com"
-      />
-      <FormInput
-        value={password}
-        autoCapitalize="none"
-        secureTextEntry
-        label="Password"
-        onChangeText={(value) => handleOnChangeText(value, "password")}
-        placeholder="********"
-      />
-      <FormInput
-        value={confirmPassword}
-        autoCapitalize="none"
-        secureTextEntry
-        label="Confirm Password"
-        onChangeText={(value) => handleOnChangeText(value, "confirmPassword")}
-        placeholder="********"
-      />
-      <Text
-        style={{
-          fontFamily: "PlusJakartaSansSemiBold",
-          fontSize: 14,
-          textAlign: "center",
-          marginVertical: 30,
-          color: "#95989D",
-        }}
-      >
-        Already have an account?{" "}
         <Text
-          style={{ color: "#0B2C7F" }}
-          onPress={() => scrollView.current.scrollTo({ x: 0 })}
+          style={{
+            fontFamily: "PlusJakartaSansBold",
+            fontSize: 25,
+            textAlign: "center",
+            marginVertical: Platform.OS === "ios" ? 45 : 20,
+          }}
         >
-          Sign in
+          Create your account
         </Text>
-      </Text>
+        <Text
+          style={{
+            color: "red",
+            fontSize: 14,
+            fontFamily: "PlusJakartaSans",
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </Text>
+        <FormInput
+          value={fullname}
+          label="Full Name"
+          onChangeText={(value) => handleOnChangeText(value, "fullname")}
+          placeholder="John Smith"
+        />
+        <FormInput
+          value={email}
+          autoCapitalize="none"
+          label="Company/Organization Email"
+          onChangeText={(value) => handleOnChangeText(value, "email")}
+          placeholder="example@email.com"
+        />
+        <FormInput
+          value={password}
+          autoCapitalize="none"
+          secureTextEntry
+          label="Password"
+          onChangeText={(value) => handleOnChangeText(value, "password")}
+          placeholder="********"
+        />
+        <FormInput
+          value={confirmPassword}
+          autoCapitalize="none"
+          secureTextEntry
+          label="Confirm Password"
+          onChangeText={(value) => handleOnChangeText(value, "confirmPassword")}
+          placeholder="********"
+        />
+        <Text
+          style={{
+            fontFamily: "PlusJakartaSansSemiBold",
+            fontSize: 14,
+            textAlign: "center",
+            marginVertical: 30,
+            color: "#95989D",
+          }}
+        >
+          Already have an account?{" "}
+          <Text
+            style={{ color: "#0B2C7F" }}
+            onPress={() => scrollView.current.scrollTo({ x: 0 })}
+          >
+            Sign in
+          </Text>
+        </Text>
+      </ScrollView>
       <FormSubmitButton title="Sign Up" onPress={submitForm} />
-    </FormContainer>
+    </View>
   );
 };
 

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
@@ -34,6 +35,7 @@ const CreateActivity = () => {
   const [time, setTime] = useState(new Date());
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [keyboardShown, setKeyboardShown] = useState(false);
 
   const { setIsLoggedIn, profile } = useLogin();
   const navigation = useNavigation();
@@ -120,6 +122,20 @@ const CreateActivity = () => {
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardShown(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardShown(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   return (
     <FormContainer
@@ -273,7 +289,9 @@ const CreateActivity = () => {
           </View>
         </View>
       </ScrollView>
-      <FormSubmitButton onPress={handleSubmit} title="Create Activity" />
+      {!keyboardShown && (
+        <FormSubmitButton onPress={handleSubmit} title="Create Activity" />
+      )}
       {loading && <AppLoader />}
     </FormContainer>
   );
